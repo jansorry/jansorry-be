@@ -1,1 +1,42 @@
+server:
+  port: 8080
 
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jpa:
+    #open-in-view: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show-sql: true
+    defer-datasource-initialization: true
+
+  #  redis:
+  #    host: ${REDIS_HOST}
+  #    port: ${REDIS_PORT}
+
+  sql:
+    init:
+      mode: always
+
+#  profiles:
+#    active: jwt, api
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
+    com.ssafy.janssory: DEBUG
