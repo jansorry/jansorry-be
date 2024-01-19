@@ -19,6 +19,6 @@ public class NagService {
 
 	public NagDetailDto findNagDetail(Long nagId) {
 		Nag nag = nagRepository.findNagById(nagId).orElseThrow(RuntimeException::new);
-		return toNagDetailDto(nag);
+		return toDetailDto(nag);
 	}
 }
