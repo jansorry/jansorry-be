@@ -1,4 +1,11 @@
 package com.ssafy.jansorry.nag.dto;
 
-public class NagDto {
+import lombok.Builder;
+
+@Builder
+public record NagDto(
+	Long nagId,
+	Long categoryId,
+	String content,
+	Long price) {
 }

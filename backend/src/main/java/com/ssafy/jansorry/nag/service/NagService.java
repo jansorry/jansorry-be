@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.jansorry.nag.domain.Nag;
-import com.ssafy.jansorry.nag.dto.NagDetailDto;
+import com.ssafy.jansorry.nag.dto.NagDto;
 import com.ssafy.jansorry.nag.repository.NagRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,8 @@ import lombok.RequiredArgsConstructor;
 public class NagService {
 	private final NagRepository nagRepository;
 
-	public NagDetailDto findNagDetail(Long nagId) {
+	public NagDto findNagDetail(Long nagId) {
 		Nag nag = nagRepository.findNagById(nagId).orElseThrow(RuntimeException::new);
-		return toDetailDto(nag);
+		return toDto(nag);
 	}
 }

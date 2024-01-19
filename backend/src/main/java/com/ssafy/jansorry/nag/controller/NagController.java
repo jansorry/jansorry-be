@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.jansorry.nag.dto.NagDetailDto;
+import com.ssafy.jansorry.nag.dto.NagDto;
 import com.ssafy.jansorry.nag.service.NagService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class NagController {
 
 	@ResponseBody
 	@GetMapping("/{nagId}")
-	private ResponseEntity<NagDetailDto> getNagDetail(@PathVariable Long nagId) {
+	private ResponseEntity<NagDto> getNagDetail(@PathVariable Long nagId) {
 		return ResponseEntity.ok(nagService.findNagDetail(nagId));
 	}
 }

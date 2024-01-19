@@ -13,5 +13,5 @@ import com.ssafy.jansorry.nag.dto.NagDto;
 public interface NagRepository extends JpaRepository<Nag, Long> {
 	Optional<Nag> findNagById(Long nagId);
 
-	List<NagDto> findAllByDeletedFalse();
+	List<Nag> findAllByDeletedFalse();
 }
