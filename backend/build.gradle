@@ -26,11 +26,34 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// reids
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// oauth
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Http Interface
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// FOR @ConfigurationProperties
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// FOR @ConfigurationProperties
+tasks.named('compileJava') {
+	inputs.files(tasks.named('processResources'))
 }
