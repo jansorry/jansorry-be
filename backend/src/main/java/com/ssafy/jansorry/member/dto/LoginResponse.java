@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class LoginResponse {
-
-	private Long memberId;
-	private String nickname;
-	private String accessToken;
-	private String refeshToken;
+public record LoginResponse(
+	Long memberId,
+	String nickname,
+	String accessToken,
+	String refeshToken
+) {
 }
