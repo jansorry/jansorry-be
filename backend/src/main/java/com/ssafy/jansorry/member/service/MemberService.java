@@ -3,6 +3,7 @@ package com.ssafy.jansorry.member.service;
 import com.ssafy.jansorry.follow.repository.FollowRepository;
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.MemeberEditdto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
@@ -21,6 +22,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final GenderRepository genderRepository;
 	private final FollowRepository followRepository;
+	private final OauthService oauthService;
 
 	@Transactional
 	public SignUpResponse createMember(SignUpRequest request) {
@@ -64,7 +66,8 @@ public class MemberService {
 			.build();
 	}
 
-	public void deleteMemeber(Member member) {
+	public void deleteMemeber(OauthServerType oauthServerType, Member member) {
+		oauthService.logout(oauthServerType, member.getId()); // 카카오 로그아웃
 		member.setDeleted(true);
 		memberRepository.save(member);
 	}
