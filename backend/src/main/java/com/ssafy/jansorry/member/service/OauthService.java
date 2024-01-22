@@ -31,6 +31,9 @@ public class OauthService {
 		Member saved = memberRepository.findByOauthId(dto.member().getOauthId())
 			.orElseGet(() -> memberRepository.save(dto.member()));
 
+		if (saved.getDeleted()) {
+			throw new RuntimeException("탈퇴한 회원입니다.");
+		}
 //		 redis oauthAccessToken 저장
 		HashOperations<Long, Object, Object> hashOperations = redisTemplate.opsForHash();
 		hashOperations.put(saved.getId(), "oauthAccessToken", dto.accessToken());
