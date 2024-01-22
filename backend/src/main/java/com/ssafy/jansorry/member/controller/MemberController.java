@@ -1,6 +1,7 @@
 package com.ssafy.jansorry.member.controller;
 
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.MemeberEditdto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,6 +49,15 @@ public class MemberController {
 		@AuthenticationPrincipal Member member,
 		@Valid @RequestBody MemeberEditdto request
 	) {
-		return ResponseEntity.ok(memberService.update(member, request));
+		return ResponseEntity.ok(memberService.updateMember(member, request));
 	}
+
+	@DeleteMapping("/withdraw")
+	public ResponseEntity<Void> removeMember(
+		@AuthenticationPrincipal Member member
+	) {
+		memberService.deleteMemeber(member);
+		return ResponseEntity.ok().build();
+	}
+
 }
