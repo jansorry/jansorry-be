@@ -2,6 +2,7 @@ package com.ssafy.jansorry.member.service;
 
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.dto.MemeberEditdto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.repository.GenderRepository;
@@ -9,6 +10,7 @@ import com.ssafy.jansorry.member.repository.MemberRepository;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +19,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final GenderRepository genderRepository;
 
+	@Transactional
 	public SignUpResponse createMember(SignUpRequest request) {
 		Member member = memberRepository.findById(request.memberId())
 			.orElseThrow(() -> new RuntimeException("NOT_FOUND_MEMBER"));
@@ -26,7 +29,6 @@ public class MemberService {
 		member.setBirth(request.birth());
 		member.setGender(gender);
 		member.setNickname(createNickname());
-		member = memberRepository.save(member);
 
 		return SignUpResponse.builder()
 			.memberId(member.getId())
@@ -47,5 +49,15 @@ public class MemberService {
 		}
 
 		return sb.toString();
+	}
+
+	public MemeberEditdto update(Member member, MemeberEditdto request) {
+		member.setNickname(request.nickname());
+
+		memberRepository.save(member);
+
+		return MemeberEditdto.builder()
+			.nickname(request.nickname())
+			.build();
 	}
 }
