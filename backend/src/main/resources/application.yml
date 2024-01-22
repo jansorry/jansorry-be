@@ -2,6 +2,10 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    include: secret
+    active: local
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -22,13 +26,25 @@ spring:
         show-sql: true
     defer-datasource-initialization: true
 
-  #  redis:
-  #    host: ${REDIS_HOST}
-  #    port: ${REDIS_PORT}
+  jwt:
+    token:
+      secret-key: ${SECRET_KEY}
+      refresh-secret-key: ${REFRESH_SECRET_KEY}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 
   sql:
     init:
       mode: always
+
+  oauth:
+    kakao:
+      client_id: ${CLIENT_ID}
+      redirect_uri: ${REDIRECT_URI}
 
 #  profiles:
 #    active: jwt, api

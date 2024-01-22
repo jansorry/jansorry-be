@@ -21,5 +21,5 @@ import lombok.Setter;
 public class Gender extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@NonNull
-	private GenderType gender;
+	private GenderType genderType;
 }
