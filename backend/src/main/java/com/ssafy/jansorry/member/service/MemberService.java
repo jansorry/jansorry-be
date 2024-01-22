@@ -1,7 +1,9 @@
 package com.ssafy.jansorry.member.service;
 
+import com.ssafy.jansorry.follow.repository.FollowRepository;
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.MemeberEditdto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
@@ -18,6 +20,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final GenderRepository genderRepository;
+	private final FollowRepository followRepository;
 
 	@Transactional
 	public SignUpResponse createMember(SignUpRequest request) {
@@ -51,7 +54,7 @@ public class MemberService {
 		return sb.toString();
 	}
 
-	public MemeberEditdto update(Member member, MemeberEditdto request) {
+	public MemeberEditdto updateMember(Member member, MemeberEditdto request) {
 		member.setNickname(request.nickname());
 
 		memberRepository.save(member);
@@ -60,4 +63,11 @@ public class MemberService {
 			.nickname(request.nickname())
 			.build();
 	}
+
+	public void deleteMemeber(Member member) {
+		member.setDeleted(true);
+		memberRepository.save(member);
+	}
+
+
 }
