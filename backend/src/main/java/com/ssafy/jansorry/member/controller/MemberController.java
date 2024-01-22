@@ -60,4 +60,11 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
+	@GetMapping()
+	public ResponseEntity<MemberResponse> getMember(
+		@AuthenticationPrincipal Member member
+	) {
+		memberService.readMemeber(member);
+		return ResponseEntity.ok().build();
+	}
 }

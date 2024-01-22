@@ -69,5 +69,11 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
-
+	public MemberResponse readMemeber(Member member) {
+		return MemberResponse.builder()
+			.imageUrl(member.getImageUrl())
+			.followingCnt(Long.valueOf(member.getFollows().size()))
+			.followerCnt(followRepository.countByToId(member.getId()))
+			.build();
+	}
 }
