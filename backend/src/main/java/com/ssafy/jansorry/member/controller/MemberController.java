@@ -67,7 +67,6 @@ public class MemberController {
 	public ResponseEntity<MemberResponse> getMember(
 		@AuthenticationPrincipal Member member
 	) {
-		memberService.readMemeber(member);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(memberService.readMemeber(member));
 	}
 }

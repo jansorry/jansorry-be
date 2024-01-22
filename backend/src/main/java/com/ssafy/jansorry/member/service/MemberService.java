@@ -1,5 +1,6 @@
 package com.ssafy.jansorry.member.service;
 
+import com.ssafy.jansorry.follow.domain.Follow;
 import com.ssafy.jansorry.follow.repository.FollowRepository;
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
@@ -10,6 +11,7 @@ import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.repository.GenderRepository;
 import com.ssafy.jansorry.member.repository.MemberRepository;
+import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,9 @@ public class MemberService {
 	}
 
 	public MemberResponse readMemeber(Member member) {
+		List<Follow> follows = followRepository.findAllByMember(member);
+		member.setFollows(follows);
+
 		return MemberResponse.builder()
 			.imageUrl(member.getImageUrl())
 			.followingCnt(Long.valueOf(member.getFollows().size()))
