@@ -21,7 +21,7 @@ import lombok.Setter;
 @Entity
 public class Follow extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id")
+	@JoinColumn(name = "from_id")
 	private Member member;
 
 	@NonNull
