@@ -25,6 +25,7 @@ public class MemberService {
 	private final GenderRepository genderRepository;
 	private final FollowRepository followRepository;
 	private final OauthService oauthService;
+	private final TokenService tokenService;
 
 	@Transactional
 	public SignUpResponse createMember(SignUpRequest request) {
@@ -38,8 +39,9 @@ public class MemberService {
 		member.setNickname(createNickname());
 
 		return SignUpResponse.builder()
-			.memberId(member.getId())
 			.nickname(member.getNickname())
+			.accessToken(tokenService.createToken(member))
+			.refreshToken(tokenService.createRefreshToken(member))
 			.build();
 	}
 
@@ -68,17 +70,18 @@ public class MemberService {
 			.build();
 	}
 
-	public void deleteMemeber(OauthServerType oauthServerType, Member member) {
+	public void deleteMember(OauthServerType oauthServerType, Member member) {
 		oauthService.logout(oauthServerType, member.getId()); // 카카오 로그아웃
 		member.setDeleted(true);
 		memberRepository.save(member);
 	}
 
-	public MemberResponse readMemeber(Member member) {
+	public MemberResponse readMember(Member member) {
 		List<Follow> follows = followRepository.findAllByMember(member);
 		member.setFollows(follows);
 
 		return MemberResponse.builder()
+			.nickname(member.getNickname())
 			.imageUrl(member.getImageUrl())
 			.followingCnt(Long.valueOf(member.getFollows().size()))
 			.followerCnt(followRepository.countByToId(member.getId()))
