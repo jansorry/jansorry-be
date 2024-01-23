@@ -30,7 +30,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/oauth/kakao"
 					, "/api/v1/oauth/redirected/kakao"
 					,"/api/v1/oauth/login/**"
-					,"/api/v1/members/signup")
+					,"/api/v1/members/signup"
+					,"/api/v1/ping")
 				.permitAll().anyRequest().authenticated());
 
 		http.addFilterBefore(new JwtAuthenticationFilter(tokenService),

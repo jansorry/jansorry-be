@@ -37,8 +37,6 @@ public class OauthService {
 		hashOperations.put(dto.member().getOauthId().getOauthServerId(), "oauthAccessToken",
 			dto.accessToken());
 
-		System.out.println();
-
 		if (member == null) { // 가입하지 않은 유저일 경우
 			return LoginResponse.builder()
 				.oauthId(dto.member().getOauthId().getOauthServerId())

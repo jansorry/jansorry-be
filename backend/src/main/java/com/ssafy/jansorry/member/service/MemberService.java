@@ -71,7 +71,7 @@ public class MemberService {
 
 	private Long createImageUrl() {
 		Random rd = new Random();
-		return rd.nextLong(10);
+		return rd.nextLong(10L);
 	}
 
 	public MemberEditDto updateMember(Member member, MemberEditDto request) {
