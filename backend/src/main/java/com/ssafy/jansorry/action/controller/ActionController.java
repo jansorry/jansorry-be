@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.action.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 public class ActionController {
 	private final ActionService actionService;
+
+	@GetMapping("/actions")
+	private ResponseEntity<List<ActionDto>> getAllActions(
+		@AuthenticationPrincipal Member member
+	) {
+		return ResponseEntity.ok(actionService.readAllActions(member.getId()));
+	}
 
 	@PostMapping("/nags/{nagId}/actions")
 	private ResponseEntity<Void> addAction(
