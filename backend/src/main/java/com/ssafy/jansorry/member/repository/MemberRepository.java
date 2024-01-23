@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByOauthId(OauthId oauthId);
+	Optional<Member> findByNickname(String nickname);
 }

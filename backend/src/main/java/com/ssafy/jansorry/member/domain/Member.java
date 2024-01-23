@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Setter
@@ -31,6 +31,7 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicUpdate
 @Table(name = "member",
 	uniqueConstraints = {
 		@UniqueConstraint(
@@ -48,7 +49,7 @@ public class Member extends BaseEntity {
 
 	@NonNull
 	@Builder.Default
-	private String nickname = "nickname";
+	private String nickname = "";
 
 	@NonNull
 	@Builder.Default

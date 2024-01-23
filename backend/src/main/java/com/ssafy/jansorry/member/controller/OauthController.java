@@ -57,6 +57,6 @@ public class OauthController {
 		@AuthenticationPrincipal Member member,
 		@PathVariable OauthServerType oauthServerType
 	) {
-		return ResponseEntity.ok(oauthService.logout(oauthServerType, member.getId()));
+		return ResponseEntity.ok(oauthService.logout(oauthServerType, member.getOauthId().getOauthServerId()));
 	}
 }
