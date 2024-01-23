@@ -2,7 +2,7 @@ package com.ssafy.jansorry.member.dto;
 
 
 public record SignUpRequest(
-	Long memberId,
+	String oauthId,
 	Long birth,
 	Long genderId
 ) {

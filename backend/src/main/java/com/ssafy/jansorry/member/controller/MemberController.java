@@ -1,7 +1,9 @@
 package com.ssafy.jansorry.member.controller;
 
 import com.ssafy.jansorry.member.domain.Member;
-import com.ssafy.jansorry.member.dto.MemeberEditdto;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.MemberResponse;
+import com.ssafy.jansorry.member.dto.MemberEditDto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.service.MemberService;
@@ -12,7 +14,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,10 +47,27 @@ public class MemberController {
 	}
 
 	@PutMapping("/rename")
-	public ResponseEntity<MemeberEditdto> editNickname(
+	public ResponseEntity<MemberEditDto> editNickname(
 		@AuthenticationPrincipal Member member,
-		@Valid @RequestBody MemeberEditdto request
+		@Valid @RequestBody MemberEditDto request
 	) {
-		return ResponseEntity.ok(memberService.update(member, request));
+		return ResponseEntity.ok(memberService.updateMember(member, request));
+	}
+
+	@DeleteMapping("/withdraw/{oauthServerType}")
+	public ResponseEntity<Void> removeMember(
+		@AuthenticationPrincipal Member member,
+		@PathVariable OauthServerType oauthServerType,
+		HttpServletResponse response
+	) {
+		memberService.deleteMember(oauthServerType, member, response);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping()
+	public ResponseEntity<MemberResponse> getMember(
+		@AuthenticationPrincipal Member member
+	) {
+		return ResponseEntity.ok(memberService.readMember(member));
 	}
 }

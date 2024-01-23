@@ -27,8 +27,8 @@ public class OauthMemberClientComposite {
 		return getClient(oauthServerType).fetch(authCode);
 	}
 
-	public KakaoLogoutResponse logout(OauthServerType oauthServerType, Long memberId) {
-		return getClient(oauthServerType).logout(memberId);
+	public KakaoLogoutResponse logout(OauthServerType oauthServerType, String oauthId) {
+		return getClient(oauthServerType).logout(oauthId);
 	}
 
 	private OauthMemberClient getClient(OauthServerType oauthServerType) {
