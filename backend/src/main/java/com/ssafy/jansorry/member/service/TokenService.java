@@ -3,6 +3,8 @@ package com.ssafy.jansorry.member.service;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.domain.OauthId;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -38,7 +40,7 @@ public class TokenService {
 	private String refreshSecretKey;
 
 	private final MemberRepository memberRepository;
-	private final RedisTemplate<Long, Object> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 	private final long TOKEN_PERIOD = 60 * 60 * 1000L; // 1시간
 	private final long REFRESH_PERIOD = 14 * 24 * 60 * 60 * 1000L; // 14일
 	private final String REDIS_REFRESH_TOKEN_KEY = "refreshToken";
@@ -74,9 +76,9 @@ public class TokenService {
 			.compact();
 
 		// redis refreshToken 저장
-		HashOperations<Long, Object, Object> hashOperations = redisTemplate.opsForHash();
-		hashOperations.put(memberId, REDIS_REFRESH_TOKEN_KEY, refreshToken);
-		redisTemplate.expire(memberId, REFRESH_PERIOD, MILLISECONDS);
+		HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+		hashOperations.put(member.getOauthId().getOauthServerId(), REDIS_REFRESH_TOKEN_KEY, refreshToken);
+		redisTemplate.expire(member.getOauthId().getOauthServerId(), REFRESH_PERIOD, MILLISECONDS);
 		return refreshToken;
 	}
 
@@ -94,6 +96,8 @@ public class TokenService {
 
 	public String resolveToken(HttpServletRequest request) {
 		String accessToken = request.getHeader("Authorization");
+
+		System.out.println("request uri : " + request.getRequestURI());
 
 		if (accessToken == null) {
 			throw new RuntimeException("AUTHORIZATION_KEY_DOES_NOT_EXIST");
@@ -115,11 +119,13 @@ public class TokenService {
 	public String reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String refreshToken = getRefreshToken(request);
-			Long memberId = getMemberIdFromRefreshToken(refreshToken);
+			String oauthServerId = getMemberIdFromRefreshToken(refreshToken);
 			String redisRefreshToken = Objects.requireNonNull(
-				redisTemplate.opsForHash().get(memberId, REDIS_REFRESH_TOKEN_KEY)).toString();
+				redisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
 
-			Member member = memberRepository.findById(memberId).orElseThrow(
+			Member member = memberRepository.findByOauthId(
+				new OauthId(oauthServerId, OauthServerType.KAKAO)
+			).orElseThrow(
 				() -> new RuntimeException("NOT_FOUND_MEMBER"));
 
 			if (!redisRefreshToken.equals(refreshToken)) {
@@ -140,10 +146,10 @@ public class TokenService {
 		return Long.valueOf(memberId);
 	}
 
-	public Long getMemberIdFromRefreshToken(String refreshToken) {
-		String memberId =
+	public String getMemberIdFromRefreshToken(String refreshToken) {
+		String oauthId =
 			Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().getSubject();
-		return Long.valueOf(memberId);
+		return oauthId;
 	}
 
 	private String getRefreshToken(HttpServletRequest request) {
