@@ -2,6 +2,8 @@ package com.ssafy.jansorry.follow.domain;
 
 import com.ssafy.jansorry.common.BaseEntity;
 import com.ssafy.jansorry.member.domain.Member;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Builder
 @Entity
 public class Follow extends BaseEntity {
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "member_id")
 	private Member member;
 

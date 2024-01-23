@@ -55,4 +55,4 @@ logging:
       springframework:
         orm:
           jpa: DEBUG
-    com.ssafy.janssory: DEBUG
+    com.ssafy.jansorry: DEBUG
