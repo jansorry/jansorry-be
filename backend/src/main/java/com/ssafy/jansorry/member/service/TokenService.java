@@ -156,7 +156,7 @@ public class TokenService {
 		return null;
 	}
 
-	// 만료된 access, refresh token 정보 삭제
+	// access, refresh token 정보 삭제
 	public void resetHeader(HttpServletResponse response) {
 		response.setHeader("Authorization", null);
 		Cookie cookie = new Cookie("refreshToken", null);
