@@ -1,4 +1,15 @@
 package com.ssafy.jansorry.action.dto;
 
-public class ActionDto {
+import java.time.LocalDateTime;
+
+import lombok.Builder;
+
+@Builder
+public record ActionDto(
+	Long nagId,
+	Long categoryId,
+	String content,
+	LocalDateTime createdAt,
+	Long price
+) {
 }
