@@ -2,13 +2,11 @@ package com.ssafy.jansorry.receipt.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +25,10 @@ public class ReceiptController {
 
 	//영수증 저장하는 API
 	@PostMapping("/receipts")
-	public ResponseEntity<ReceiptDto> saveReceipt(	//ResponseEntity: 결과 데이터와 HTTP 상태 코드를 직접 제어할 수 있는 클래스
+	public ResponseEntity<Void> saveReceipt(	//ResponseEntity: 결과 데이터와 HTTP 상태 코드를 직접 제어할 수 있는 클래스
 		@RequestBody ReceiptDto receiptDto	//@RequestBody: HTTP 요청 바디 값을 컨트롤러 메서드의 매개 변수로 받을 수 있음
 	){
-		receiptService.save(receiptDto);
+		receiptService.createReceipt(receiptDto);
 		return ResponseEntity.ok().build();
 	}
 
@@ -40,7 +38,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,	//로그인 세션 정보
 		@PathVariable("seq") Long seq
 	){
-		ReceiptDto receiptDto = receiptService.readReceiptsBySeq(member.getId(),seq);
+		ReceiptDto receiptDto = receiptService.readReceipt(member.getId(),seq);
 		return ResponseEntity.ok(receiptDto);
 	}
 
