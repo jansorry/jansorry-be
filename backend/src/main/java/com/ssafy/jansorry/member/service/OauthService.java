@@ -20,7 +20,7 @@ public class OauthService {
 	private final OauthMemberClientComposite oauthMemberClientComposite;
 	private final MemberRepository memberRepository;
 	private final TokenService tokenService;
-	private final RedisTemplate<Long, Object> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
 		return authCodeRequestUrlProviderComposite.provide(oauthServerType);
@@ -28,31 +28,34 @@ public class OauthService {
 
 	public LoginResponse login(OauthServerType oauthServerType, String authCode) {
 		OauthDto dto = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-		Member saved = memberRepository.findByOauthId(dto.member().getOauthId())
-			.orElseGet(() -> memberRepository.save(dto.member()));
 
-		if (saved.getDeleted()) {
-			throw new RuntimeException("탈퇴한 회원입니다.");
-		}
-//		 redis oauthAccessToken 저장
-		HashOperations<Long, Object, Object> hashOperations = redisTemplate.opsForHash();
-		hashOperations.put(saved.getId(), "oauthAccessToken", dto.accessToken());
+		Member member = memberRepository.findByOauthId(dto.member().getOauthId())
+			.orElseGet(() -> null);
 
-		if (!saved.getNickname().equals("nickname")) {
+		//redis oauthAccessToken 저장
+		HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+		hashOperations.put(dto.member().getOauthId().getOauthServerId(), "oauthAccessToken",
+			dto.accessToken());
+
+		System.out.println();
+
+		if (member == null) { // 가입하지 않은 유저일 경우
 			return LoginResponse.builder()
-				.memberId(saved.getId())
-				.nickname(saved.getNickname())
-				.accessToken(tokenService.createToken(saved))
-				.refeshToken(tokenService.createRefreshToken(saved))
+				.oauthId(dto.member().getOauthId().getOauthServerId())
 				.build();
+		} else if (member.getDeleted()) {
+			throw new RuntimeException("탈퇴한 회원입니다.");
 		}
 
 		return LoginResponse.builder()
-			.memberId(saved.getId())
+			.oauthId(member.getOauthId().getOauthServerId())
+			.nickname(member.getNickname())
+			.accessToken(tokenService.createToken(member))
+			.refeshToken(tokenService.createRefreshToken(member))
 			.build();
 	}
 
-	public KakaoLogoutResponse logout(OauthServerType oauthServerType, Long memberId) {
-		return oauthMemberClientComposite.logout(oauthServerType, memberId);
+	public KakaoLogoutResponse logout(OauthServerType oauthServerType, String oauthId) {
+		return oauthMemberClientComposite.logout(oauthServerType, oauthId);
 	}
 }

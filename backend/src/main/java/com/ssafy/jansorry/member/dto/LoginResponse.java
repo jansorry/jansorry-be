@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record LoginResponse(
-	Long memberId,
+	String oauthId,
 	String nickname,
 	String accessToken,
 	String refeshToken
