@@ -14,5 +14,5 @@ import lombok.RequiredArgsConstructor;
 public interface ReceiptRepository extends JpaRepository<Receipt,Long> {
 	//JpaRepository: PagingAndSortingRepository, QueryByExampleExecutor 인터페이스를 상속받고 있음
 	//PagingAndSqortingRepository: CrudRepository 인터페이스를 상속받고 있음
-	List<Receipt> findAllByMemberIdAndDeletedFalse(Long memberId);
+	List<Receipt> findAllByMemberIdAndDeletedFalseOrderByCreatedAtAsc(Long memberId);
 }
