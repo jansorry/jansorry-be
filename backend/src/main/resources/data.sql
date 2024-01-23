@@ -7,7 +7,6 @@ VALUES
     ('UNKNOWN', NOW(), NOW());
 
 -- ------------------------------------------------------------------------
-
 -- category insert
 INSERT INTO category (group_type, created_at, updated_at)
 VALUES
