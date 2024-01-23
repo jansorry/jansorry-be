@@ -8,5 +8,5 @@ public interface OauthMemberClient {
 	OauthServerType supportServer();
 	OauthDto fetch(String code);
 
-	KakaoLogoutResponse logout(Long memberId);
+	KakaoLogoutResponse logout(String oauthId);
 }
