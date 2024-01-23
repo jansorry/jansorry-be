@@ -30,7 +30,7 @@ dependencies {
 	// validate
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// reids
+	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	// oauth

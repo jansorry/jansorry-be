@@ -1,6 +1,10 @@
 package com.ssafy.jansorry.config;
 
+import static com.ssafy.jansorry.exception.ErrorCode.BAD_REQUEST;
+
+import com.ssafy.jansorry.exception.ErrorCode;
 import com.ssafy.jansorry.member.service.TokenService;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -9,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -21,6 +26,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 		throws IOException, ServletException {
+
 		try {
 			String token = tokenService.resolveToken((HttpServletRequest) request);
 
@@ -39,16 +45,18 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 //		} catch (CustomException e) {
 //			request.setAttribute("errorCode", e.getErrorCode());
 //			request.setAttribute("httpStatus", e.getHttpStatus());
-//		} catch (SignatureException | MalformedJwtException e) {
-//			request.setAttribute("errorCode", INVALID_TOKEN);
+//		} catch (MalformedJwtException e) {
+//			request.setAttribute("errorCode", "INVALID_TOKEN");
 //			request.setAttribute("httpStatus", UNAUTHORIZED);
 //		} catch (IllegalArgumentException e) {
-//			request.setAttribute("errorCode", EMPTY_TOKEN);
+//			request.setAttribute("errorCode", "EMPTY_TOKEN");
 //			request.setAttribute("httpStatus", BAD_REQUEST);
 //		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			request.setAttribute("errorCode", BAD_REQUEST);
+			request.setAttribute("httpStatus", HttpStatus.BAD_REQUEST);
 		}
+
 
 		chain.doFilter(request, response);
 	}
