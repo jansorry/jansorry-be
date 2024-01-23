@@ -29,6 +29,9 @@ create-env:
   artifacts:
     paths:
       - .env # .env 파일을 아티팩트로 지정
+  only:
+    - be-deploy
+
 
 build:
   stage: build
