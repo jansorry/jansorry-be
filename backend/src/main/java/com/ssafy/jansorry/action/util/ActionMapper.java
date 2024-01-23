@@ -15,9 +15,13 @@ public class ActionMapper {
 			.build();
 	}
 
-	public static ActionDto toDto() {
+	public static ActionDto toDto(Action action) {
 		return ActionDto.builder()
-			// add field
+			.nagId(action.getNag().getId())
+			.categoryId(action.getNag().getCategory().getId())
+			.content(action.getContent())
+			.createdAt(action.getCreatedAt())
+			.price(action.getNag().getPrice())
 			.build();
 	}
 }
