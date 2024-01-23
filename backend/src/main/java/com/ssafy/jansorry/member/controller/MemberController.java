@@ -3,7 +3,7 @@ package com.ssafy.jansorry.member.controller;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.dto.MemberResponse;
-import com.ssafy.jansorry.member.dto.MemeberEditdto;
+import com.ssafy.jansorry.member.dto.MemberEditDto;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.service.MemberService;
@@ -47,9 +47,9 @@ public class MemberController {
 	}
 
 	@PutMapping("/rename")
-	public ResponseEntity<MemeberEditdto> editNickname(
+	public ResponseEntity<MemberEditDto> editNickname(
 		@AuthenticationPrincipal Member member,
-		@Valid @RequestBody MemeberEditdto request
+		@Valid @RequestBody MemberEditDto request
 	) {
 		return ResponseEntity.ok(memberService.updateMember(member, request));
 	}
@@ -57,9 +57,10 @@ public class MemberController {
 	@DeleteMapping("/withdraw/{oauthServerType}")
 	public ResponseEntity<Void> removeMember(
 		@AuthenticationPrincipal Member member,
-		@PathVariable OauthServerType oauthServerType
+		@PathVariable OauthServerType oauthServerType,
+		HttpServletResponse response
 	) {
-		memberService.deleteMemeber(oauthServerType, member);
+		memberService.deleteMember(oauthServerType, member, response);
 		return ResponseEntity.ok().build();
 	}
 
@@ -67,6 +68,6 @@ public class MemberController {
 	public ResponseEntity<MemberResponse> getMember(
 		@AuthenticationPrincipal Member member
 	) {
-		return ResponseEntity.ok(memberService.readMemeber(member));
+		return ResponseEntity.ok(memberService.readMember(member));
 	}
 }
