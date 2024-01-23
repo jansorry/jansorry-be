@@ -39,6 +39,9 @@ public class Action extends BaseEntity {
 	@NonNull
 	private String content;
 
+	@NonNull
+	private Boolean deleted;
+
 	@OneToMany(mappedBy = "action", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
 	private List<Favorite> favorites = new ArrayList<>();
