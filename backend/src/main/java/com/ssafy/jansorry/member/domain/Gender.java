@@ -2,6 +2,7 @@ package com.ssafy.jansorry.member.domain;
 
 import com.ssafy.jansorry.common.BaseEntity;
 import com.ssafy.jansorry.member.domain.type.GenderType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

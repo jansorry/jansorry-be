@@ -1,15 +1,17 @@
 package com.ssafy.jansorry.member.domain.client;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.springframework.stereotype.Component;
 
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
 import com.ssafy.jansorry.member.dto.OauthDto;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import org.springframework.stereotype.Component;
 
 @Component
 public class OauthMemberClientComposite {

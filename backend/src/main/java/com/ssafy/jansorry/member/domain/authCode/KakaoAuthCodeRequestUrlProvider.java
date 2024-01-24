@@ -1,16 +1,17 @@
 package com.ssafy.jansorry.member.domain.authCode;
 
-import com.ssafy.jansorry.config.KakaoOauthConfig;
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.ssafy.jansorry.config.KakaoOauthConfig;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
 	private final KakaoOauthConfig kakaoOauthConfig;
-
 
 	@Override
 	public OauthServerType supportServer() {

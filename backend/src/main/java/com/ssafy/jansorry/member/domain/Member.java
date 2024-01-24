@@ -1,9 +1,14 @@
 package com.ssafy.jansorry.member.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.common.BaseEntity;
-import com.ssafy.jansorry.follow.domain.Follow;
 import com.ssafy.jansorry.favorite.domain.Favorite;
+import com.ssafy.jansorry.follow.domain.Follow;
 import com.ssafy.jansorry.receipt.domain.Receipt;
 
 import jakarta.persistence.CascadeType;
@@ -15,15 +20,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Setter
@@ -32,17 +34,8 @@ import org.hibernate.annotations.DynamicUpdate;
 @Builder
 @Entity
 @DynamicUpdate
-@Table(name = "member",
-	uniqueConstraints = {
-		@UniqueConstraint(
-			name = "oauth_id_unique",
-			columnNames = {
-				"oauth_server_id",
-				"oauth_server"
-			}
-		)
-	}
-)
+@Table(name = "member", uniqueConstraints = {
+	@UniqueConstraint(name = "oauth_id_unique", columnNames = {"oauth_server_id", "oauth_server"})})
 public class Member extends BaseEntity {
 	@Embedded
 	private OauthId oauthId;

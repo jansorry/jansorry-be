@@ -1,13 +1,15 @@
 package com.ssafy.jansorry.member.domain.authCode;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
 
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import org.springframework.stereotype.Component;
+
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
 
 @Component
 public class AuthCodeRequestUrlProviderComposite {
