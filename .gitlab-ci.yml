@@ -1,14 +1,12 @@
 stages:
   - create-env
-  - build
-  - deploy
+  - backend-build
+  - docker-build
+  - docker-pull
 
 variables:
-  RESOURCE_PATH: ./backend/src/main/resources/application.yml
-  PROJECT_NAME: jansorry
   DOCKER_COMPOSE_FILE: docker-compose.yml
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
+  DEPLOY_BRANCH: be-deploy
 
 create-env:
   stage: create-env
@@ -24,17 +22,14 @@ create-env:
     - echo "REDIS_PASSWORD = ${REDIS_PASSWORD}" >> .env
     - echo "CLIENT_ID = ${CLIENT_ID}" >> .env
     - echo "REDIRECT_URI = ${REDIRECT_URI}" >> .env
-    # - cat .env # debug
-    # - pwd
   artifacts:
     paths:
-      - .env # .env 파일을 아티팩트로 지정
+      - .env
   only:
-    - be-deploy
+    - $DEPLOY_BRANCH
 
-
-build:
-  stage: build
+backend-build:
+  stage: backend-build
   image: gradle:jdk17
   script:
     - cd backend
@@ -48,38 +43,36 @@ build:
     paths:
       - backend/build/libs/jansorry-0.0.1-SNAPSHOT.jar
   only:
-    - be-deploy
+    - $DEPLOY_BRANCH
 
 docker-build:
-  stage: deploy
+  stage: docker-build
   dependencies:
     - create-env
-    - build
-  image: docker:20.10.16
-  services:
-    - docker:20.10.16-dind
+    - backend-build
   script:
-    # - docker rm -f $(docker ps -qa) || true #전체 컨테이너 삭제
-    - docker rmi ${DOCKER_USERNAME}/${DOCKER_REPO} || true
-
-    # jar dir check
-    # - ls -al backend/build/libs/
-    # - pwd
-    # - ls -al
-    # - cp .env ./backend/ #env copy
-
+    # image removal
+    - docker rmi ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest || true
+    # login
     - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+    # backend push
     - cd backend
-    - docker build -t ${DOCKER_USERNAME}/${DOCKER_REPO}:latest -f Dockerfile .
-    - docker push ${DOCKER_USERNAME}/${DOCKER_REPO}
-
-    - cd ..
-    # - pwd
-    # Docker Compose를 사용하여 환경 변수 적용 및 컨테이너 실행
-    - docker-compose -f $DOCKER_COMPOSE_FILE up -d
-    # - docker image prune -f
-
+    - docker build -t ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest -f Dockerfile .
+    - docker push ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest
   only:
-    - be-deploy
-  # tags:
-  #   - docker
+    - $DEPLOY_BRANCH
+
+docker-pull:
+  stage: docker-pull
+  script:
+    # login again
+    - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+    # container removal
+    - docker stop $(docker ps -q --filter ancestor=${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest) || true
+    - docker rm $(docker ps -aq --filter ancestor=${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest) || true
+    # deploy
+    - docker-compose -f $DOCKER_COMPOSE_FILE pull
+    - docker-compose -f $DOCKER_COMPOSE_FILE up -d
+    - docker image prune -f
+  only:
+    - $DEPLOY_BRANCH

@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: ${DOCKER_USERNAME}/${DOCKER_REPO}:latest
+    image: ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest
     ports:
       - "8080:8080"
     env_file:
