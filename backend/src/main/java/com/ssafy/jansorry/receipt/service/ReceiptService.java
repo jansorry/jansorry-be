@@ -24,7 +24,13 @@ public class ReceiptService {
 
 	//Dto는 Service <-> Controller
 	//Entity는 Repository <-> Service
-	public void createReceipt(ReceiptDto receiptDto) {
+	public void createReceipt(ReceiptDto receiptDto, Long memberId) {
+		int receiptCount =  receiptRepository.findAllByMemberIdAndDeletedFalseOrderById(memberId).size();
+
+		if(receiptCount >= 3){
+			throw new BaseException(RECEIPT_OVERFLOW);
+		}
+
 		receiptRepository.save(toEntity(receiptDto));
 	}
 
@@ -52,8 +58,7 @@ public class ReceiptService {
 	}
 
 	public Long readReceiptCount(Long memberId) {
-		List<Receipt> receipts = receiptRepository.findAllByMemberIdAndDeletedFalseOrderById(memberId);
-
-		return (long)receipts.size();
+		int receiptCount =  receiptRepository.findAllByMemberIdAndDeletedFalseOrderById(memberId).size();
+		return (long)receiptCount;
 	}
 }
