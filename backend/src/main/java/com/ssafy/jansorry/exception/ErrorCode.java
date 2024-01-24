@@ -19,6 +19,9 @@ public enum ErrorCode {
 	ACTION_NOT_FOUND(404, "해당 대응을 찾을 수 없습니다."),
 	ACTION_ALREADY_DELETED(404, "이미 삭제된 대응입니다"),
 
+	//receipt
+	RECEIPT_NOT_FOUND(404,"해당 영수증을 찾을 수 없습니다."),
+	RECEIPT_OVERFLOW(400,"영수증 최대 발행 개수는 3개 입니다."),
 
 	// ===========================================================================
 	// 4xx: Client Errors
