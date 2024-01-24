@@ -6,7 +6,6 @@ stages:
 
 variables:
   DOCKER_COMPOSE_FILE: docker-compose.yml
-  DEPLOY_BRANCH: be-deploy
 
 create-env:
   stage: create-env
@@ -26,7 +25,7 @@ create-env:
     paths:
       - .env
   only:
-    - $DEPLOY_BRANCH
+    - be-deploy
 
 backend-build:
   stage: backend-build
@@ -43,7 +42,7 @@ backend-build:
     paths:
       - backend/build/libs/jansorry-0.0.1-SNAPSHOT.jar
   only:
-    - $DEPLOY_BRANCH
+    - be-deploy
 
 docker-build:
   stage: docker-build
@@ -60,7 +59,7 @@ docker-build:
     - docker build -t ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest -f Dockerfile .
     - docker push ${DOCKER_USERNAME}/${DOCKER_REPO}:backend-latest
   only:
-    - $DEPLOY_BRANCH
+    - be-deploy
 
 docker-pull:
   stage: docker-pull
@@ -75,4 +74,4 @@ docker-pull:
     - docker-compose -f $DOCKER_COMPOSE_FILE up -d
     - docker image prune -f
   only:
-    - $DEPLOY_BRANCH
+    - be-deploy
