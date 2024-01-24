@@ -6,6 +6,7 @@ import com.ssafy.jansorry.member.dto.OauthDto;
 
 public interface OauthMemberClient {
 	OauthServerType supportServer();
+
 	OauthDto fetch(String code);
 
 	KakaoLogoutResponse logout(String oauthId);

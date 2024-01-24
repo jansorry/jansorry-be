@@ -1,7 +1,8 @@
 package com.ssafy.jansorry.member.util;
 
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import org.springframework.core.convert.converter.Converter;
+
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
 
 public class OauthServerTypeConverter implements Converter<String, OauthServerType> {
 
