@@ -45,7 +45,7 @@ public class TokenService {
 	private String refreshSecretKey;
 
 	private final MemberRepository memberRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> tokenRedisTemplate;
 	private final long TOKEN_PERIOD = 30 * 60 * 1000L; // 30분
 	private final long REFRESH_PERIOD = 14 * 24 * 60 * 60 * 1000L; // 14일
 	private final String REDIS_REFRESH_TOKEN_KEY = "refreshToken";
@@ -81,9 +81,9 @@ public class TokenService {
 			.compact();
 
 		// redis refreshToken 저장
-		HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+		HashOperations<String, Object, Object> hashOperations = tokenRedisTemplate.opsForHash();
 		hashOperations.put(member.getOauthId().getOauthServerId(), REDIS_REFRESH_TOKEN_KEY, refreshToken);
-		redisTemplate.expire(member.getOauthId().getOauthServerId(), REFRESH_PERIOD, MILLISECONDS);
+		tokenRedisTemplate.expire(member.getOauthId().getOauthServerId(), REFRESH_PERIOD, MILLISECONDS);
 		return refreshToken;
 	}
 
@@ -125,7 +125,7 @@ public class TokenService {
 			String refreshToken = readRefreshToken(request);
 			String oauthServerId = readMemberIdFromRefreshToken(refreshToken);
 			String redisRefreshToken = Objects.requireNonNull(
-				redisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
+				tokenRedisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
 
 			Member member = memberRepository.findByOauthId(
 				new OauthId(oauthServerId, OauthServerType.KAKAO)
