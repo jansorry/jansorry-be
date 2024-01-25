@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
@@ -28,13 +29,18 @@ public class RedisConfig {
 		redisStandaloneConfiguration.setPassword(password);
 		redisStandaloneConfiguration.setDatabase(database);
 
-		return new LettuceConnectionFactory(redisStandaloneConfiguration);
+		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+		lettuceConnectionFactory.afterPropertiesSet();
+
+		return lettuceConnectionFactory;
 	}
 
 	@Bean
 	public RedisTemplate<String, Object> tokenRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(TOKEN_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		return redisTemplate;
 	}
 
@@ -42,6 +48,8 @@ public class RedisConfig {
 	public RedisTemplate<String, Object> favoriteRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(FOLLOW_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		return redisTemplate;
 	}
 
@@ -49,6 +57,8 @@ public class RedisConfig {
 	public RedisTemplate<String, Object> followRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(FAVORITE_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		return redisTemplate;
 	}
 }
