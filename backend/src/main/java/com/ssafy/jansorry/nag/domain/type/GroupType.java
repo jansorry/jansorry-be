@@ -10,7 +10,7 @@ public enum GroupType {
 	APPEARANCE(1L),
 	LOVE(2L),
 	CAREER(3L),
-	FINANCE(4L),
+	FAMILY(4L),
 	OTHER(5L);
 
 	private final Long value;

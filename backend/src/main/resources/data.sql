@@ -14,7 +14,7 @@ VALUES
     ('APPEARANCE', NOW(), NOW()),
     ('LOVE', NOW(), NOW()),
     ('CAREER', NOW(), NOW()),
-    ('FINANCE', NOW(), NOW()),
+    ('FAMILY', NOW(), NOW()),
     ('OTHER', NOW(), NOW());
 
 -- ------------------------------------------------------------------------
