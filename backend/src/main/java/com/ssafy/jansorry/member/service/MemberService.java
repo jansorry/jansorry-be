@@ -5,6 +5,7 @@ import static com.ssafy.jansorry.exception.ErrorCode.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
@@ -78,8 +79,7 @@ public class MemberService {
 	}
 
 	private Long createImageUrl() {
-		Random rd = new Random();
-		return rd.nextLong(10L);
+		return ThreadLocalRandom.current().nextLong(10L);
 	}
 
 	public MemberEditDto updateMember(Member member, MemberEditDto request) {
@@ -111,7 +111,7 @@ public class MemberService {
 		return MemberResponse.builder()
 			.nickname(member.getNickname())
 			.imageUrl(member.getImageUrl())
-			.followingCnt(Long.valueOf(member.getFollows().size()))
+			.followingCnt((long)member.getFollows().size())
 			.followerCnt(followRepository.countByToId(member.getId()))
 			.build();
 	}
