@@ -3,15 +3,18 @@ package com.ssafy.jansorry.action.service;
 import static com.ssafy.jansorry.action.util.ActionMapper.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
+import com.ssafy.jansorry.action.dto.MainPageDto;
 import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.action.util.ActionMapper;
 import com.ssafy.jansorry.exception.BaseException;
@@ -54,5 +57,19 @@ public class ActionService {
 			throw new BaseException(ACTION_ALREADY_DELETED);
 		}
 		action.setDeleted(true);// dirty checking
+	}
+
+	public MainPageDto readMainPage(Long memberId) {
+		List<Long> list = actionRepository.findGroupTypesByMemberId(memberId);
+		if (CollectionUtils.isEmpty(list)) {
+			return MainPageDto.builder()
+				.count(0L)
+				.categoryList(new ArrayList<>())
+				.build();
+		}
+		return MainPageDto.builder()
+			.count((long)list.size())
+			.categoryList(list)
+			.build();
 	}
 }
