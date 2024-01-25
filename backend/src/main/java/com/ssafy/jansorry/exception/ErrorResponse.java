@@ -1,6 +1,5 @@
 package com.ssafy.jansorry.exception;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

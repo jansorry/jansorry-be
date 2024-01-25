@@ -1,13 +1,5 @@
 package com.ssafy.jansorry.member.controller;
 
-import com.ssafy.jansorry.member.domain.Member;
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
-import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
-import com.ssafy.jansorry.member.dto.LoginResponse;
-import com.ssafy.jansorry.member.service.OauthService;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +9,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
+import com.ssafy.jansorry.member.dto.LoginResponse;
+import com.ssafy.jansorry.member.service.OauthService;
+
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/oauth")
 public class OauthController {
 	private final OauthService oauthService;
-
 
 	@SneakyThrows
 	@GetMapping("/{oauthServerType}")
@@ -40,7 +41,6 @@ public class OauthController {
 	public ResponseEntity<Void> redirectAuthCodeRequestUrl(
 		@RequestParam String code
 	) {
-		System.out.println(code);
 		return ResponseEntity.ok().build();
 	}
 
@@ -55,8 +55,10 @@ public class OauthController {
 	@PostMapping("/logout/{oauthServerType}")
 	public ResponseEntity<KakaoLogoutResponse> logout(
 		@AuthenticationPrincipal Member member,
+		HttpServletResponse response,
 		@PathVariable OauthServerType oauthServerType
 	) {
-		return ResponseEntity.ok(oauthService.logout(oauthServerType, member.getOauthId().getOauthServerId()));
+		return ResponseEntity.ok(
+			oauthService.logout(response, oauthServerType, member.getOauthId().getOauthServerId()));
 	}
 }

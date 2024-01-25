@@ -1,22 +1,30 @@
 package com.ssafy.jansorry.member.service;
 
+import static com.ssafy.jansorry.exception.ErrorCode.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
+import org.springframework.stereotype.Service;
+
+import com.ssafy.jansorry.exception.BaseException;
+import com.ssafy.jansorry.exception.ErrorCode;
 import com.ssafy.jansorry.follow.domain.Follow;
 import com.ssafy.jansorry.follow.repository.FollowRepository;
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.OauthId;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
-import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.MemberEditDto;
+import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.repository.GenderRepository;
 import com.ssafy.jansorry.member.repository.MemberRepository;
+
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +38,7 @@ public class MemberService {
 
 	public SignUpResponse createMember(SignUpRequest request) {
 		Gender gender = genderRepository.findById(request.genderId())
-				.orElseThrow(() -> new RuntimeException("NOT_FOUND_GENDER"));
+			.orElseThrow(() -> new BaseException(NOT_FOUND_GENDER));
 
 		Member member = memberRepository.save(
 			Member.builder()
@@ -58,7 +66,7 @@ public class MemberService {
 			sb = new StringBuilder();
 
 			for (int i = 0; i < 4; i++) {
-				sb.append((char) ('a' + rd.nextInt(26)));
+				sb.append((char)('a' + rd.nextInt(26)));
 			}
 
 			for (int i = 0; i < 4; i++) {
@@ -75,8 +83,13 @@ public class MemberService {
 	}
 
 	public MemberEditDto updateMember(Member member, MemberEditDto request) {
-		member.setNickname(request.nickname());
+		Optional<Member> existingMember = memberRepository.findByNickname(request.nickname());
 
+		if (existingMember.isPresent()) {
+			throw new BaseException(ErrorCode.MEMBER_NICKNAME_DUPLICATED);
+		}
+
+		member.setNickname(request.nickname());
 		memberRepository.save(member);
 
 		return MemberEditDto.builder()
@@ -84,10 +97,9 @@ public class MemberService {
 			.build();
 	}
 
-	public void deleteMember(OauthServerType oauthServerType, Member member,
-		HttpServletResponse response) {
-		oauthService.logout(oauthServerType, member.getOauthId().getOauthServerId()); // 카카오 로그아웃
-		tokenService.resetHeader(response); // header에서 accesstoken, refreshtoken 삭제
+	public void deleteMember(HttpServletResponse response, OauthServerType oauthServerType, Member member) {
+		oauthService.logout(response, oauthServerType, member.getOauthId().getOauthServerId()); // 카카오 로그아웃
+		tokenService.deleteHeader(response); // header에서 accesstoken, refreshtoken 삭제
 		member.setDeleted(true);
 		memberRepository.save(member);
 	}

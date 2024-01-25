@@ -1,25 +1,14 @@
 package com.ssafy.jansorry.member.service;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static com.ssafy.jansorry.exception.ErrorCode.*;
+import static java.util.concurrent.TimeUnit.*;
 
-import com.ssafy.jansorry.member.domain.Member;
-import com.ssafy.jansorry.member.domain.OauthId;
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
-import com.ssafy.jansorry.member.repository.MemberRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +17,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import com.ssafy.jansorry.exception.BaseException;
+import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.domain.OauthId;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.repository.MemberRepository;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +46,7 @@ public class TokenService {
 
 	private final MemberRepository memberRepository;
 	private final RedisTemplate<String, Object> redisTemplate;
-	private final long TOKEN_PERIOD = 60 * 60 * 1000L; // 1시간
+	private final long TOKEN_PERIOD = 30 * 60 * 1000L; // 30분
 	private final long REFRESH_PERIOD = 14 * 24 * 60 * 60 * 1000L; // 14일
 	private final String REDIS_REFRESH_TOKEN_KEY = "refreshToken";
 
@@ -68,7 +73,7 @@ public class TokenService {
 		Claims claims = Jwts.claims().setSubject(String.valueOf(memberId));
 		Date now = new Date();
 
-		String refreshToken =  Jwts.builder()
+		String refreshToken = Jwts.builder()
 			.setClaims(claims)
 			.setIssuedAt(now)
 			.setExpiration(new Date(now.getTime() + REFRESH_PERIOD))
@@ -82,11 +87,11 @@ public class TokenService {
 		return refreshToken;
 	}
 
-	public Authentication getAuthentication(String token) {
-		Long memberId = getMemberId(token);
+	public Authentication readAuthentication(String token) {
+		Long memberId = readMemberId(token);
 
 		Member member = memberRepository.findById(memberId).orElseThrow(
-			() -> new RuntimeException("not found"));
+			() -> new BaseException(NOT_FOUND_MEMBER));
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority(member.getNickname()));
@@ -96,11 +101,10 @@ public class TokenService {
 
 	public String resolveToken(HttpServletRequest request) {
 		String accessToken = request.getHeader("Authorization");
-
 		System.out.println("request uri : " + request.getRequestURI());
 
-		if (accessToken == null) {
-			throw new RuntimeException("AUTHORIZATION_KEY_DOES_NOT_EXIST");
+		if (accessToken == null || accessToken.trim().length() == 0) {
+			throw new BaseException(UNAUTHORIZED);
 		}
 
 		return accessToken;
@@ -118,43 +122,43 @@ public class TokenService {
 
 	public String reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			String refreshToken = getRefreshToken(request);
-			String oauthServerId = getMemberIdFromRefreshToken(refreshToken);
+			String refreshToken = readRefreshToken(request);
+			String oauthServerId = readMemberIdFromRefreshToken(refreshToken);
 			String redisRefreshToken = Objects.requireNonNull(
 				redisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
 
 			Member member = memberRepository.findByOauthId(
 				new OauthId(oauthServerId, OauthServerType.KAKAO)
 			).orElseThrow(
-				() -> new RuntimeException("NOT_FOUND_MEMBER"));
+				() -> new BaseException(NOT_FOUND_MEMBER));
 
 			if (!redisRefreshToken.equals(refreshToken)) {
-				resetHeader(response);
-				throw new RuntimeException("EXPIRED_REFRESH_TOKEN");
+				deleteHeader(response);
+				throw new BaseException(EXPIRED_REFRESH_TOKEN);
 			}
 
 			return createToken(member);
 
 		} catch (NullPointerException e) {
-			resetHeader(response);
-			throw new RuntimeException("EXPIRED_REFRESH_TOKEN");
+			deleteHeader(response);
+			throw new BaseException(EXPIRED_REFRESH_TOKEN);
 		}
 	}
 
-	public Long getMemberId(String token) {
+	public Long readMemberId(String token) {
 		String memberId = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 		return Long.valueOf(memberId);
 	}
 
-	public String getMemberIdFromRefreshToken(String refreshToken) {
+	public String readMemberIdFromRefreshToken(String refreshToken) {
 		String oauthId =
 			Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().getSubject();
 		return oauthId;
 	}
 
-	private String getRefreshToken(HttpServletRequest request) {
+	private String readRefreshToken(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie :  cookies) {
+		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refreshToken")) {
 				return cookie.getValue();
 			}
@@ -163,7 +167,7 @@ public class TokenService {
 	}
 
 	// access, refresh token 정보 삭제
-	public void resetHeader(HttpServletResponse response) {
+	public void deleteHeader(HttpServletResponse response) {
 		response.setHeader("Authorization", null);
 		Cookie cookie = new Cookie("refreshToken", null);
 		cookie.setHttpOnly(true);

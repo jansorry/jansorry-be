@@ -1,16 +1,17 @@
 package com.ssafy.jansorry.member.domain.client;
 
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+import static org.springframework.http.MediaType.*;
 
-import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
-import com.ssafy.jansorry.member.dto.KakaoMemberResponse;
-import com.ssafy.jansorry.member.dto.KakaoToken;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
+
+import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
+import com.ssafy.jansorry.member.dto.KakaoMemberResponse;
+import com.ssafy.jansorry.member.dto.KakaoToken;
 
 public interface KakaoApiClient {
 

@@ -1,6 +1,7 @@
 package com.ssafy.jansorry.member.domain;
 
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;

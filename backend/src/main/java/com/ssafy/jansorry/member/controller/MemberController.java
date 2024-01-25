@@ -1,17 +1,5 @@
 package com.ssafy.jansorry.member.controller;
 
-import com.ssafy.jansorry.member.domain.Member;
-import com.ssafy.jansorry.member.domain.type.OauthServerType;
-import com.ssafy.jansorry.member.dto.MemberResponse;
-import com.ssafy.jansorry.member.dto.MemberEditDto;
-import com.ssafy.jansorry.member.dto.SignUpRequest;
-import com.ssafy.jansorry.member.dto.SignUpResponse;
-import com.ssafy.jansorry.member.service.MemberService;
-import com.ssafy.jansorry.member.service.TokenService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +10,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.MemberEditDto;
+import com.ssafy.jansorry.member.dto.MemberResponse;
+import com.ssafy.jansorry.member.dto.SignUpRequest;
+import com.ssafy.jansorry.member.dto.SignUpResponse;
+import com.ssafy.jansorry.member.service.MemberService;
+import com.ssafy.jansorry.member.service.TokenService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,10 +59,10 @@ public class MemberController {
 	@DeleteMapping("/withdraw/{oauthServerType}")
 	public ResponseEntity<Void> removeMember(
 		@AuthenticationPrincipal Member member,
-		@PathVariable OauthServerType oauthServerType,
-		HttpServletResponse response
+		HttpServletResponse response,
+		@PathVariable OauthServerType oauthServerType
 	) {
-		memberService.deleteMember(oauthServerType, member, response);
+		memberService.deleteMember(response, oauthServerType, member);
 		return ResponseEntity.ok().build();
 	}
 
