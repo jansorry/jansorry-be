@@ -22,7 +22,7 @@ import lombok.Setter;
 @Builder
 @Entity
 public class Follow extends BaseEntity {
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "from_id")
 	private Member member;
 

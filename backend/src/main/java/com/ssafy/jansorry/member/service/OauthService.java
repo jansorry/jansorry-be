@@ -23,7 +23,7 @@ public class OauthService {
 	private final OauthMemberClientComposite oauthMemberClientComposite;
 	private final MemberRepository memberRepository;
 	private final TokenService tokenService;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> tokenRedisTemplate;
 
 	public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
 		return authCodeRequestUrlProviderComposite.provide(oauthServerType);
@@ -35,7 +35,7 @@ public class OauthService {
 		Member member = memberRepository.findByOauthId(dto.member().getOauthId()).orElseGet(() -> null);
 
 		// redis oauthAccessToken 저장
-		HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+		HashOperations<String, Object, Object> hashOperations = tokenRedisTemplate.opsForHash();
 		hashOperations.put(dto.member().getOauthId().getOauthServerId(), "oauthAccessToken", dto.accessToken());
 
 		if (member == null) { // 가입하지 않은 유저일 경우

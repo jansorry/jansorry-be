@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class KakaoMemberClient implements OauthMemberClient {
 	private final KakaoApiClient kakaoApiClient;
 	private final KakaoOauthConfig kakaoOauthConfig;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> tokenRedisTemplate;
 
 	@Override
 	public OauthServerType supportServer() {
@@ -39,7 +39,7 @@ public class KakaoMemberClient implements OauthMemberClient {
 
 	@Override
 	public KakaoLogoutResponse logout(String oauthId) {
-		String oauthAccessToken = (String)redisTemplate.opsForHash().get(oauthId, "oauthAccessToken");
+		String oauthAccessToken = (String)tokenRedisTemplate.opsForHash().get(oauthId, "oauthAccessToken");
 		return kakaoApiClient.logout("Bearer " + oauthAccessToken);
 	}
 
