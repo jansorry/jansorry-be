@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
+import com.ssafy.jansorry.action.dto.MainPageDto;
 import com.ssafy.jansorry.action.service.ActionService;
 import com.ssafy.jansorry.member.domain.Member;
 
@@ -57,5 +58,12 @@ public class ActionController {
 	) {
 		actionService.deleteAction(actionId);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/main")
+	private ResponseEntity<MainPageDto> getMainPage(
+		@AuthenticationPrincipal Member member
+	){
+		return ResponseEntity.ok(actionService.readMainPage(member.getId()));
 	}
 }
