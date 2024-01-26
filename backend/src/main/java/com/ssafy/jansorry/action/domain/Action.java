@@ -40,7 +40,8 @@ public class Action extends BaseEntity {
 	private String content;
 
 	@NonNull
-	private Boolean deleted;
+	@Builder.Default
+	private Boolean deleted = false;
 
 	@OneToMany(mappedBy = "action", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
