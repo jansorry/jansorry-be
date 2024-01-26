@@ -11,7 +11,8 @@ public enum ErrorCode {
 		"이 리소스에 대한 접근 권한이 없습니다."),
 
 	// member
-	NOT_FOUND_MEMBER(404, "해당 사용자를 찾을 수 없습니다."), MEMBER_NICKNAME_DUPLICATED(409, "이미 사용중인 닉네임입니다"),
+	NOT_FOUND_MEMBER(404, "해당 사용자를 찾을 수 없습니다."), MEMBER_NICKNAME_DUPLICATED(409,
+		"이미 사용중인 닉네임입니다."), INVALID_MEMBER_WITHDRAWN(403, "당신이 요청한 사용자는 탈퇴했으므로 접근할 수 없습니다."),
 
 	// gender
 	NOT_FOUND_GENDER(404, "해당 성별 타입을 찾을 수 없습니다."),
