@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
+import com.ssafy.jansorry.member.dto.LoginDto;
 import com.ssafy.jansorry.member.dto.LoginResponse;
 import com.ssafy.jansorry.member.service.OauthService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -46,10 +48,24 @@ public class OauthController {
 
 	@GetMapping("/login/{oauthServerType}")
 	public ResponseEntity<LoginResponse> login(
+		HttpServletResponse response,
 		@PathVariable OauthServerType oauthServerType,
 		@RequestParam("code") String code
 	) {
-		return ResponseEntity.ok(oauthService.login(oauthServerType, code));
+
+		LoginDto login = oauthService.login(oauthServerType, code);
+
+		Cookie cookie = new Cookie("refreshToken", login.refreshToken());
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+
+		return ResponseEntity.ok(LoginResponse
+			.builder()
+			.oauthId(login.oauthId())
+			.nickname(login.nickname())
+			.accessToken(login.accessToken())
+			.build());
 	}
 
 	@PostMapping("/logout/{oauthServerType}")

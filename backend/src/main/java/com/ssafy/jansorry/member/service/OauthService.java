@@ -1,15 +1,18 @@
 package com.ssafy.jansorry.member.service;
 
+import static com.ssafy.jansorry.exception.ErrorCode.*;
+
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.authCode.AuthCodeRequestUrlProviderComposite;
 import com.ssafy.jansorry.member.domain.client.OauthMemberClientComposite;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
 import com.ssafy.jansorry.member.dto.KakaoLogoutResponse;
-import com.ssafy.jansorry.member.dto.LoginResponse;
+import com.ssafy.jansorry.member.dto.LoginDto;
 import com.ssafy.jansorry.member.dto.OauthDto;
 import com.ssafy.jansorry.member.repository.MemberRepository;
 
@@ -29,7 +32,7 @@ public class OauthService {
 		return authCodeRequestUrlProviderComposite.provide(oauthServerType);
 	}
 
-	public LoginResponse login(OauthServerType oauthServerType, String authCode) {
+	public LoginDto login(OauthServerType oauthServerType, String authCode) {
 		OauthDto dto = oauthMemberClientComposite.fetch(oauthServerType, authCode);
 
 		Member member = memberRepository.findByOauthId(dto.member().getOauthId()).orElseGet(() -> null);
@@ -39,16 +42,18 @@ public class OauthService {
 		hashOperations.put(dto.member().getOauthId().getOauthServerId(), "oauthAccessToken", dto.accessToken());
 
 		if (member == null) { // 가입하지 않은 유저일 경우
-			return LoginResponse.builder().oauthId(dto.member().getOauthId().getOauthServerId()).build();
+			return LoginDto.builder()
+				.oauthId(dto.member().getOauthId().getOauthServerId())
+				.build();
 		} else if (member.getDeleted()) {
-			throw new RuntimeException("탈퇴한 회원입니다.");
+			throw new BaseException(INVALID_MEMBER_WITHDRAWN);
 		}
 
-		return LoginResponse.builder()
+		return LoginDto.builder()
 			.oauthId(member.getOauthId().getOauthServerId())
 			.nickname(member.getNickname())
 			.accessToken(tokenService.createToken(member))
-			.refeshToken(tokenService.createRefreshToken(member))
+			.refreshToken(tokenService.createRefreshToken(member))
 			.build();
 	}
 

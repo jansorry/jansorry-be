@@ -9,17 +9,38 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 public record KakaoMemberResponse(Long id, boolean hasSignedUp, LocalDateTime connectAt, KaKaoAccount kakaoAccount) {
 
 	@JsonNaming(SnakeCaseStrategy.class)
-	public record KaKaoAccount(boolean profileNeedsAgreement, boolean profileNicknameNeedsAgreement,
-							   boolean profileImageNeedsAgreement, Profile profile, boolean nameNeedsAgreement,
-							   String name, boolean emailNeedsAgreement, boolean isEmailValid, boolean isEmailVerified,
-							   String email, boolean ageRangeNeedsAgreement, String ageRange,
-							   boolean birthyearNeedsAgreement, String birthyear, boolean birthdayNeedsAgreement,
-							   String birthday, String birthdayType, boolean genderNeedsAgreement, String gender,
-							   boolean phoneNumberNeedsAgreement, String phoneNumber, boolean ciNeedsAgreement,
-							   String ci, LocalDateTime ciAuthenticatedAt) {
+	public record KaKaoAccount(
+		boolean profileNeedsAgreement,
+		boolean profileNicknameNeedsAgreement,
+		boolean profileImageNeedsAgreement,
+		Profile profile,
+		boolean nameNeedsAgreement,
+		String name,
+		boolean emailNeedsAgreement,
+		boolean isEmailValid,
+		boolean isEmailVerified,
+		String email,
+		boolean ageRangeNeedsAgreement,
+		String ageRange,
+		boolean birthyearNeedsAgreement,
+		String birthyear,
+		boolean birthdayNeedsAgreement,
+		String birthday,
+		String birthdayType,
+		boolean genderNeedsAgreement,
+		String gender,
+		boolean phoneNumberNeedsAgreement,
+		String phoneNumber,
+		boolean ciNeedsAgreement,
+		String ci,
+		LocalDateTime ciAuthenticatedAt) {
 	}
 
 	@JsonNaming(SnakeCaseStrategy.class)
-	public record Profile(String nickname, String thumbnailImageUrl, String profileImageUrl, boolean isDefaultImage) {
+	public record Profile(
+		String nickname,
+		String thumbnailImageUrl,
+		String profileImageUrl,
+		boolean isDefaultImage) {
 	}
 }
