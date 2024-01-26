@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.jansorry.favorite.dto.FavoriteDto;
+import com.ssafy.jansorry.favorite.dto.FavoriteInfoDto;
 import com.ssafy.jansorry.favorite.repository.FavoriteRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,22 @@ public class FavoriteService {
 	private final FavoriteRepository favoriteRepository;
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
-	public Long readFavoriteCount(Long actionId) {
+	public FavoriteInfoDto readFavoriteCount(Long actionId, Long memberId) {
 		FavoriteDto favoriteDto = getFavoriteDto(actionId.toString());
-		// redis에 존재하지 않는 데이터라면 0개를 반환
-		return favoriteDto == null ? 0L : (long)favoriteDto.memberIdSet().size();
+		// redis에 존재하지 않는 데이터라면 0개를 반환 (개수 도출)
+		Long favoriteCount = favoriteDto == null ? 0L : (long)favoriteDto.memberIdSet().size();
+
+		if (favoriteCount == 0L) {
+			return FavoriteInfoDto.builder()
+				.favoriteCount(favoriteCount)
+				.checked(Boolean.FALSE)
+				.build();
+		}
+
+		return FavoriteInfoDto.builder()
+			.favoriteCount(favoriteCount)
+			.checked(favoriteDto.memberIdSet().contains(memberId))
+			.build();
 	}
 
 	// redis 좋아요 테이블을 업데이트하는 메서드
