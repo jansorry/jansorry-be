@@ -24,7 +24,7 @@ public class FavoriteController {
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
 	) {
-		favoriteService.createFavorite(actionId, member.getId());
+		favoriteService.updateFavorite(actionId, member.getId(), true);
 		return ResponseEntity.ok().build();
 	}
 
@@ -33,7 +33,7 @@ public class FavoriteController {
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
 	) {
-		favoriteService.deleteFavorite(actionId, member.getId());
+		favoriteService.updateFavorite(actionId, member.getId(), false);
 		return ResponseEntity.ok().build();
 	}
 }
