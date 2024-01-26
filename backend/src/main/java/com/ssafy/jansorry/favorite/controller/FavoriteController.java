@@ -26,7 +26,7 @@ public class FavoriteController {
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
 	) {
-		return ResponseEntity.ok(favoriteService.readFavoriteCount(actionId, member.getId()));
+		return ResponseEntity.ok(favoriteService.readFavoriteInfo(actionId, member.getId()));
 	}
 
 	@PostMapping("/actions/{actionId}/favorite")

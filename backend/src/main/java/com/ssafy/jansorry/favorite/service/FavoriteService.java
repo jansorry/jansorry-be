@@ -22,7 +22,7 @@ public class FavoriteService {
 	private final FavoriteRepository favoriteRepository;
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
-	public FavoriteInfoDto readFavoriteCount(Long actionId, Long memberId) {
+	public FavoriteInfoDto readFavoriteInfo(Long actionId, Long memberId) {
 		FavoriteDto favoriteDto = getFavoriteDto(actionId.toString());
 		// redis에 존재하지 않는 데이터라면 0개를 반환 (개수 도출)
 		Long favoriteCount = favoriteDto == null ? 0L : (long)favoriteDto.memberIdSet().size();
