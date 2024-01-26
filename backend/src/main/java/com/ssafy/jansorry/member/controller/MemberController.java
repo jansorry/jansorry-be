@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.LoginDto;
 import com.ssafy.jansorry.member.dto.MemberEditDto;
 import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
 import com.ssafy.jansorry.member.dto.SignUpResponse;
+import com.ssafy.jansorry.member.dto.TokenReissueResponse;
+import com.ssafy.jansorry.member.dto.TokenResponse;
 import com.ssafy.jansorry.member.service.MemberService;
 import com.ssafy.jansorry.member.service.TokenService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -33,19 +37,35 @@ public class MemberController {
 	private final TokenService tokenService;
 
 	@GetMapping("/reissue")
-	public ResponseEntity<Void> reissueAccessToken(
+	public ResponseEntity<TokenReissueResponse> reissueAccessToken(
 		HttpServletRequest request, HttpServletResponse response) {
-		String accessToken = tokenService.reissueAccessToken(request, response);
-		response.setHeader("Authorization", accessToken);
+		TokenResponse tokenResponse = tokenService.reissueAccessToken(request, response);
 
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(
+			TokenReissueResponse.builder()
+				.accessToken(tokenResponse.accessToken())
+				.build()
+		);
 	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<SignUpResponse> addMember(
+		HttpServletResponse response,
 		@RequestBody SignUpRequest request
 	) {
-		return ResponseEntity.ok(memberService.createMember(request));
+		LoginDto login = memberService.createMember(request);
+
+		Cookie cookie = new Cookie("refreshToken", login.refreshToken());
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+
+		return ResponseEntity.ok(
+			SignUpResponse.builder()
+				.nickname(login.nickname())
+				.accessToken(login.accessToken())
+				.build()
+		);
 	}
 
 	@PutMapping("/rename")
