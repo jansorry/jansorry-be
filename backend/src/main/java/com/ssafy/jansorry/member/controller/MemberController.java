@@ -36,7 +36,7 @@ public class MemberController {
 	private final MemberService memberService;
 	private final TokenService tokenService;
 
-	@GetMapping("/reissue")
+	@PostMapping("/reissue")
 	public ResponseEntity<TokenReissueResponse> reissueAccessToken(
 		HttpServletRequest request, HttpServletResponse response) {
 		TokenResponse tokenResponse = tokenService.reissueAccessToken(request, response);
