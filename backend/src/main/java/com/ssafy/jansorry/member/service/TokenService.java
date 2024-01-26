@@ -39,10 +39,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class TokenService {
 
-	@Value("${spring.jwt.token.secret-key")
+	@Value("${spring.jwt.token.secret-key}")
 	private String secretKey;
 
-	@Value("${spring.jwt.token.refresh-secret-key")
+	@Value("${spring.jwt.token.refresh-secret-key}")
 	private String refreshSecretKey;
 
 	private final MemberRepository memberRepository;
@@ -71,7 +71,7 @@ public class TokenService {
 
 	public String createRefreshToken(Member member) {
 		Long memberId = member.getId();
-		Claims claims = Jwts.claims().setSubject(String.valueOf(memberId));
+		Claims claims = Jwts.claims().setSubject(String.valueOf(member.getOauthId().getOauthServerId()));
 		Date now = new Date();
 
 		String refreshToken = Jwts.builder()
@@ -91,8 +91,7 @@ public class TokenService {
 	public Authentication readAuthentication(String token) {
 		Long memberId = readMemberId(token);
 
-		Member member = memberRepository.findById(memberId).orElseThrow(
-			() -> new BaseException(NOT_FOUND_MEMBER));
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority(member.getNickname()));
@@ -128,22 +127,15 @@ public class TokenService {
 			String redisRefreshToken = Objects.requireNonNull(
 				tokenRedisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
 
-			Member member = memberRepository.findByOauthId(
-				new OauthId(oauthServerId, OauthServerType.KAKAO)
-			).orElseThrow(
-				() -> new BaseException(NOT_FOUND_MEMBER));
+			Member member = memberRepository.findByOauthId(new OauthId(oauthServerId, OauthServerType.KAKAO))
+				.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 
 			if (!redisRefreshToken.equals(refreshToken)) {
 				deleteHeader(response);
 				throw new BaseException(EXPIRED_REFRESH_TOKEN);
 			}
 
-			return TokenResponse
-				.builder()
-				.accessToken(createToken(member))
-				.refreshToken(refreshToken)
-				.build()
-				;
+			return TokenResponse.builder().accessToken(createToken(member)).refreshToken(refreshToken).build();
 
 		} catch (NullPointerException e) {
 			deleteHeader(response);
@@ -157,8 +149,11 @@ public class TokenService {
 	}
 
 	public String readMemberIdFromRefreshToken(String refreshToken) {
-		String oauthId =
-			Jwts.parser().setSigningKey(refreshSecretKey).parseClaimsJws(refreshToken).getBody().getSubject();
+		String oauthId = Jwts.parser()
+			.setSigningKey(refreshSecretKey)
+			.parseClaimsJws(refreshToken)
+			.getBody()
+			.getSubject();
 		return oauthId;
 	}
 
@@ -166,7 +161,7 @@ public class TokenService {
 		Cookie[] cookies = request.getCookies();
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("refreshToken")) {
-				return cookie.getValue();
+				return cookie.getValue().trim();
 			}
 		}
 		return null;
