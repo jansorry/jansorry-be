@@ -27,7 +27,7 @@ public class SecurityConfig {
 			.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/oauth/kakao", "/api/v1/oauth/redirected/kakao",
-					"/api/v1/oauth/login/**", "/api/v1/members/signup", "/api/v1/ping")
+					"/api/v1/oauth/login/**", "/api/v1/members/signup", "/api/v1/ping", "/api/v1/members/reissue")
 				.permitAll()
 				.anyRequest()
 				.authenticated());
