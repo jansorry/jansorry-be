@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteController {
 	private final FavoriteService favoriteService;
 
-	@GetMapping("/actions/{actionId}")
+	@GetMapping("/actions/{actionId}/favorite")
 	private ResponseEntity<FavoriteInfoDto> getFavoriteCount(
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
@@ -29,7 +29,7 @@ public class FavoriteController {
 		return ResponseEntity.ok(favoriteService.readFavoriteCount(actionId, member.getId()));
 	}
 
-	@PostMapping("/actions/{actionId}/like")
+	@PostMapping("/actions/{actionId}/favorite")
 	private ResponseEntity<Void> addFavorite(
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
@@ -38,7 +38,7 @@ public class FavoriteController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/actions/{actionId}/like")
+	@DeleteMapping("/actions/{actionId}/favorite")
 	private ResponseEntity<Void> removeFavorite(
 		@PathVariable Long actionId,
 		@AuthenticationPrincipal Member member
