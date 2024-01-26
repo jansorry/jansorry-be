@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			} else { // access_token 유효하지 않을 때 재발급
 				String accessToken =
 					tokenService.reissueAccessToken((HttpServletRequest)request,
-						(HttpServletResponse)response);
+						(HttpServletResponse)response).accessToken();
 				((HttpServletResponse)response).setHeader("Authorization", accessToken);
 				Authentication authentication = tokenService.readAuthentication(accessToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);

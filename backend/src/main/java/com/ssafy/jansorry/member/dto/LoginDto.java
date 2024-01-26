@@ -3,8 +3,10 @@ package com.ssafy.jansorry.member.dto;
 import lombok.Builder;
 
 @Builder
-public record SignUpResponse(
+public record LoginDto(
+	String oauthId,
 	String nickname,
-	String accessToken
+	String accessToken,
+	String refreshToken
 ) {
 }

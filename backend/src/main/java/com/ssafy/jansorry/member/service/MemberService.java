@@ -17,10 +17,10 @@ import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.OauthId;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.LoginDto;
 import com.ssafy.jansorry.member.dto.MemberEditDto;
 import com.ssafy.jansorry.member.dto.MemberResponse;
 import com.ssafy.jansorry.member.dto.SignUpRequest;
-import com.ssafy.jansorry.member.dto.SignUpResponse;
 import com.ssafy.jansorry.member.repository.GenderRepository;
 import com.ssafy.jansorry.member.repository.MemberRepository;
 
@@ -37,7 +37,7 @@ public class MemberService {
 	private final OauthService oauthService;
 	private final TokenService tokenService;
 
-	public SignUpResponse createMember(SignUpRequest request) {
+	public LoginDto createMember(SignUpRequest request) {
 		Gender gender = genderRepository.findById(request.genderId())
 			.orElseThrow(() -> new BaseException(NOT_FOUND_GENDER));
 
@@ -51,7 +51,7 @@ public class MemberService {
 				.build()
 		);
 
-		return SignUpResponse.builder()
+		return LoginDto.builder()
 			.nickname(member.getNickname())
 			.accessToken(tokenService.createToken(member))
 			.refreshToken(tokenService.createRefreshToken(member))

@@ -22,6 +22,7 @@ import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.OauthId;
 import com.ssafy.jansorry.member.domain.type.OauthServerType;
+import com.ssafy.jansorry.member.dto.TokenResponse;
 import com.ssafy.jansorry.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;
@@ -120,7 +121,7 @@ public class TokenService {
 		}
 	}
 
-	public String reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+	public TokenResponse reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String refreshToken = readRefreshToken(request);
 			String oauthServerId = readMemberIdFromRefreshToken(refreshToken);
@@ -137,7 +138,12 @@ public class TokenService {
 				throw new BaseException(EXPIRED_REFRESH_TOKEN);
 			}
 
-			return createToken(member);
+			return TokenResponse
+				.builder()
+				.accessToken(createToken(member))
+				.refreshToken(refreshToken)
+				.build()
+				;
 
 		} catch (NullPointerException e) {
 			deleteHeader(response);

@@ -6,7 +6,6 @@ import lombok.Builder;
 public record LoginResponse(
 	String oauthId,
 	String nickname,
-	String accessToken,
-	String refeshToken
+	String accessToken
 ) {
 }
