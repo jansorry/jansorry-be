@@ -25,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
 				HttpMethod.PUT.name(),
 				HttpMethod.DELETE.name()
 			)
+			.allowedHeaders("Content-Type", "Authorization") // Authorization 헤더 허용
 			.allowCredentials(true)
 			.exposedHeaders("*");
 	}
