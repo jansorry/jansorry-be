@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		throws IOException, ServletException {
 
 		try {
-			String token = tokenService.resolveToken((HttpServletRequest)request);
+			String token = tokenService.resolveToken((HttpServletRequest)request).replace("Bearer ", "");
 
 			if (tokenService.validateToken(token)) { // access_token 유효할 때
 				Authentication authentication = tokenService.readAuthentication(token);
