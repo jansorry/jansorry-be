@@ -30,11 +30,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 		throws IOException, ServletException {
-		String token = tokenService.resolveToken((HttpServletRequest)request).replace("Bearer ", "");
-		System.out.println(token);
-
 		try {
-			token = tokenService.resolveToken((HttpServletRequest)request).replace("Bearer ", "");
+			String token = tokenService.resolveToken((HttpServletRequest)request).replace("Bearer ", "");
+			System.out.println("filter token = " + token);
 
 			if (tokenService.validateToken(token)) { // access_token 유효할 때
 				System.out.println("valid!! token");
