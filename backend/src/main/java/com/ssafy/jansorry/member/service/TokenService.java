@@ -70,7 +70,6 @@ public class TokenService {
 	}
 
 	public String createRefreshToken(Member member) {
-		Long memberId = member.getId();
 		Claims claims = Jwts.claims().setSubject(String.valueOf(member.getOauthId().getOauthServerId()));
 		Date now = new Date();
 
@@ -121,16 +120,29 @@ public class TokenService {
 	}
 
 	public TokenResponse reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+		String refreshToken = readRefreshToken(request);
+		String oauthServerId = readMemberIdFromRefreshToken(refreshToken);
+		String redisRefreshToken = Objects.requireNonNull(
+			tokenRedisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
+		System.out.println("refreshToken = " + refreshToken);
+		System.out.println("oauthServerId = " + oauthServerId);
+		System.out.println("redisRefreshToken = " + redisRefreshToken);
+
 		try {
-			String refreshToken = readRefreshToken(request);
-			String oauthServerId = readMemberIdFromRefreshToken(refreshToken);
-			String redisRefreshToken = Objects.requireNonNull(
+			refreshToken = readRefreshToken(request);
+			oauthServerId = readMemberIdFromRefreshToken(refreshToken);
+			redisRefreshToken = Objects.requireNonNull(
 				tokenRedisTemplate.opsForHash().get(oauthServerId, REDIS_REFRESH_TOKEN_KEY)).toString();
+			System.out.println("refreshToken = " + refreshToken);
+			System.out.println("oauthServerId = " + oauthServerId);
+			System.out.println("redisRefreshToken = " + redisRefreshToken);
+			System.out.println(refreshToken.equals(redisRefreshToken));
 
 			Member member = memberRepository.findByOauthId(new OauthId(oauthServerId, OauthServerType.KAKAO))
 				.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 
-			if (!redisRefreshToken.equals(refreshToken)) {
+			if (!redisRefreshToken.equals(refreshToken)) {// 리프레시 토큰 만료 시 헤더에서 삭제
+				System.out.println("expired.. different!!");
 				deleteHeader(response);
 				throw new BaseException(EXPIRED_REFRESH_TOKEN);
 			}
@@ -138,6 +150,7 @@ public class TokenService {
 			return TokenResponse.builder().accessToken(createToken(member)).refreshToken(refreshToken).build();
 
 		} catch (NullPointerException e) {
+			System.out.println("npe... from where??");
 			deleteHeader(response);
 			throw new BaseException(EXPIRED_REFRESH_TOKEN);
 		}
