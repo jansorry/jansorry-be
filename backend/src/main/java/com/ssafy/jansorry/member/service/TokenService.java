@@ -110,11 +110,16 @@ public class TokenService {
 	}
 
 	public boolean validateToken(String token) {
+		System.out.println("isValidate? : " + token);
+		Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+		System.out.println(claims);
+		System.out.println(claims.getExpiration().after(new Date()));
 		try {
-			Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+			claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 			return claims.getExpiration().after(new Date());
 
 		} catch (ExpiredJwtException e) {
+			System.out.println("expired!!");
 			return false;
 		}
 	}
