@@ -58,17 +58,10 @@ public class OauthController {
 
 		LoginDto login = oauthService.login(oauthServerType, code);
 
-		// Cookie cookie = new Cookie("refreshToken", login.refreshToken());
-		// cookie.setHttpOnly(true);
-		// cookie.setPath("/");
-		// response.addCookie(cookie);
-
-		// SameSite=None; Secure 설정을 위한 쿠키 문자열 생성
-		String cookieValue = "refreshToken=" + URLEncoder.encode(login.refreshToken(), StandardCharsets.UTF_8) +
-			"; HttpOnly; Path=/; SameSite=None; Secure";
-
-		// 쿠키 헤더 추가
-		response.setHeader("Set-Cookie", cookieValue);
+		Cookie cookie = new Cookie("refreshToken", login.refreshToken());
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 
 		return ResponseEntity.ok(LoginResponse
 			.builder()
