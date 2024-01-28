@@ -63,7 +63,7 @@ public class OauthController {
 		cookie.setPath("/");
 		// 기존의 쿠키 설정을 문자열로 변환
 		String cookieValue = "refreshToken=" + login.refreshToken() +
-			"; HttpOnly; Path=/; SameSite=None";
+			"; HttpOnly; Secure; Path=/; SameSite=None";
 
 		// 응답 헤더에 쿠키 추가
 		response.addHeader("Set-Cookie", cookieValue);
