@@ -61,10 +61,9 @@ public class MemberController {
 		Cookie cookie = new Cookie("refreshToken", login.refreshToken());
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
-		cookie.setSecure(true); // HTTPS를 사용하는 경우
 		// 기존의 쿠키 설정을 문자열로 변환
 		String cookieValue = "refreshToken=" + login.refreshToken() +
-			"; HttpOnly; Secure; Path=/; SameSite=None";
+			"; HttpOnly; Path=/; SameSite=None";
 
 		// 응답 헤더에 쿠키 추가
 		response.addHeader("Set-Cookie", cookieValue);
