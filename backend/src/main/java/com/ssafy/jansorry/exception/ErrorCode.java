@@ -29,6 +29,9 @@ public enum ErrorCode {
 	// token
 	EXPIRED_REFRESH_TOKEN(404, "만료된 refresh token 입니다."),
 
+	// redis
+	ATTEMPTS_OVERFLOW(500, "팔로우 업데이트 실패: 최대 재시도 횟수 도달"),
+
 	// ===========================================================================
 	// 4xx: Client Errors
 	NOT_FOUND(404, "Not Found"), METHOD_NOT_ALLOWED(405, "Method Not Allowed"), CONFLICT(409, "Conflict"),

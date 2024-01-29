@@ -47,18 +47,12 @@ public class ActionController {
 	}
 
 	@GetMapping("/actions/{actionId}")
-	private ResponseEntity<ActionDto> getAction(
-		@PathVariable Long actionId,
-		@AuthenticationPrincipal Member member
-	) {
+	private ResponseEntity<ActionDto> getAction(@PathVariable Long actionId) {
 		return ResponseEntity.ok(actionService.readAction(actionId));
 	}
 
 	@DeleteMapping("/actions/{actionId}")
-	private ResponseEntity<Void> removeAction(
-		@PathVariable Long actionId,
-		@AuthenticationPrincipal Member member
-	) {
+	private ResponseEntity<Void> removeAction(@PathVariable Long actionId) {
 		actionService.deleteAction(actionId);
 		return ResponseEntity.ok().build();
 	}

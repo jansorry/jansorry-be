@@ -2,7 +2,6 @@ package com.ssafy.jansorry.favorite.service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,20 +22,23 @@ public class FavoriteService {
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
 	public FavoriteInfoDto readFavoriteInfo(Long actionId, Long memberId) {
-		FavoriteDto favoriteDto = getFavoriteDto(actionId.toString());
-		// redis에 존재하지 않는 데이터라면 0개를 반환 (개수 도출)
-		Long favoriteCount = favoriteDto == null ? 0L : (long)favoriteDto.memberIdSet().size();
+		String key = actionId.toString();
+		FavoriteDto favoriteDto = getFavoriteDto(key);
+
+		// redis에 존재하지 않는 데이터라면 개수는 0개
+		Long favoriteCount = favoriteDto == null ? 0L : (long)favoriteDto.getMemberIdSet().size();
 
 		if (favoriteCount == 0L) {
 			return FavoriteInfoDto.builder()
-				.favoriteCount(favoriteCount)
-				.checked(Boolean.FALSE)
+				.favoriteCount(favoriteCount)// 0개
+				.checked(Boolean.FALSE)// 0개일 경우 체크도 False
 				.build();
 		}
 
+		// 좋아요 개수가 가 0개가 아닐 경우
 		return FavoriteInfoDto.builder()
 			.favoriteCount(favoriteCount)
-			.checked(favoriteDto.memberIdSet().contains(memberId))
+			.checked(favoriteDto.getMemberIdSet().contains(memberId))// 체크 여부 판단하여 담아서 리턴
 			.build();
 	}
 
@@ -45,31 +47,24 @@ public class FavoriteService {
 		String key = actionId.toString();
 		FavoriteDto favoriteDto = getFavoriteDto(key);
 
-		// 좋아요 추가 시
 		if (isCreate) {
-			Set<Long> updatedMemberIdSet =
-				favoriteDto != null ? new HashSet<>(favoriteDto.memberIdSet()) : new HashSet<>();
-			updatedMemberIdSet.add(memberId);
-			updateFavoriteDto(key, updatedMemberIdSet);
+			// 좋아요 추가
+			if (favoriteDto == null) {
+				favoriteDto = FavoriteDto.builder()
+					.memberIdSet(new HashSet<>())
+					.updatedAt(LocalDateTime.now())
+					.build();
+			}
+			favoriteDto.addFavorite(memberId);
+			updateFavoriteDto(key, favoriteDto); // 좋아요 업데이트
 			return;
 		}
-
-		// 좋아요 취소 시, redis 에 키가 없으면 (즉, favoriteDto가 null이면) 바로 리턴
+		// 좋아요 취소
 		if (favoriteDto == null) {
-			return;
+			return; // Redis에 키가 없으면 (즉, favoriteDto가 null이면) 바로 리턴
 		}
-
-		// 이 시점에서 favoriteDto는 null이 아니므로 안전하게 Set을 초기화
-		Set<Long> updatedMemberIdSet = new HashSet<>(favoriteDto.memberIdSet());
-		updatedMemberIdSet.remove(memberId);
-
-		// 모든 좋아요가 삭제되면 key,value 완전 제거
-		if (updatedMemberIdSet.isEmpty()) {
-			favoriteRedisTemplate.delete(key);
-			return;
-		}
-		// 모든 좋아요가 삭제된게 아니라면 좋아요 업데이트
-		updateFavoriteDto(key, updatedMemberIdSet);
+		favoriteDto.removeFavorite(memberId);
+		updateFavoriteDto(key, favoriteDto); // 좋아요 업데이트
 	}
 
 	// redis 로부터 해당 FavoriteDto 를 반환하는 메서드
@@ -78,17 +73,14 @@ public class FavoriteService {
 	}
 
 	// redis 에 업데이트 하는 메서드
-	private void updateFavoriteDto(String key, Set<Long> memberIdSet) {
-		FavoriteDto updatedFavoriteDto = FavoriteDto.builder()
-			.memberIdSet(memberIdSet)
-			.updatedAt(LocalDateTime.now())
-			.build();
-
+	private void updateFavoriteDto(String key, FavoriteDto updatedFavoriteDto) {
 		favoriteRedisTemplate.opsForValue().set(key, updatedFavoriteDto);
 	}
 
 	// batch & scheduler: redis to mysql
 	public void synchronizeFavorites() {
 		// Redis 데이터를 MySQL에 동기화하는 로직 구현
+
+		// todo: 모든 좋아요가 삭제되있다면 batch에 반영 후, redis에서 해당 key,value 완전 제거하기
 	}
 }
