@@ -20,11 +20,13 @@ import com.ssafy.jansorry.member.dto.LoginResponse;
 import com.ssafy.jansorry.member.service.OauthService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+@Tag(name = "인증 대행 컨트롤러", description = "Oauth 관련 로그인 및 로그아웃 기능 등이 포함되어 있음")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/oauth")
@@ -51,7 +53,8 @@ public class OauthController {
 	}
 
 	@Operation(
-		summary = "카카오 로그인")
+		summary = "카카오 로그인",
+		description = "카카오 계정을 통해 로그인을 진행한다.")
 	@GetMapping("/login/{oauthServerType}")
 	public ResponseEntity<LoginResponse> login(
 		HttpServletResponse response,
@@ -80,7 +83,8 @@ public class OauthController {
 	}
 
 	@Operation(
-		summary = "로그아웃")
+		summary = "로그아웃",
+		description = "로그아웃 이후 헤더와 쿠키를 초기화시킨다.")
 	@PostMapping("/logout/{oauthServerType}")
 	public ResponseEntity<KakaoLogoutResponse> logout(
 		@AuthenticationPrincipal Member member,

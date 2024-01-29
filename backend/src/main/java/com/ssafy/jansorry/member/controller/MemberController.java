@@ -25,12 +25,14 @@ import com.ssafy.jansorry.member.service.MemberService;
 import com.ssafy.jansorry.member.service.TokenService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "회원 컨트롤러", description = "회원의 인증 및 인가 기능, 회원가입, 닉네임 수정, 조회 등의 기능이 포함되어 있음")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/members")
@@ -39,7 +41,8 @@ public class MemberController {
 	private final TokenService tokenService;
 
 	@Operation(
-		summary = "토큰 재발급")
+		summary = "access 토큰 재발급",
+		description = "만료된 access token을 재발급 한다.")
 	@PostMapping("/reissue")
 	public ResponseEntity<TokenReissueResponse> reissueAccessToken(
 		HttpServletRequest request, HttpServletResponse response) {
@@ -53,7 +56,8 @@ public class MemberController {
 	}
 
 	@Operation(
-		summary = "회원가입")
+		summary = "회원가입",
+		description = "카카오 인증 후 입력받은 회원 정보를 바탕으로 회원 가입을 진행한다. 이후 로그인 상태로 전환한다.")
 	@PostMapping("/signup")
 	public ResponseEntity<SignUpResponse> addMember(
 		HttpServletResponse response,
@@ -80,7 +84,8 @@ public class MemberController {
 	}
 
 	@Operation(
-		summary = "닉네임 변경")
+		summary = "닉네임 변경",
+		description = "본인의 닉네임을 변경한다. (특수문자 및 공백 제외 20글자 이내)")
 	@PutMapping("/rename")
 	public ResponseEntity<MemberEditDto> editNickname(
 		@AuthenticationPrincipal Member member,
@@ -90,7 +95,8 @@ public class MemberController {
 	}
 
 	@Operation(
-		summary = "회원탈퇴")
+		summary = "회원탈퇴",
+		description = "회원을 비활성화시킨다. (soft deletion)")
 	@DeleteMapping("/withdraw/{oauthServerType}")
 	public ResponseEntity<Void> removeMember(
 		@AuthenticationPrincipal Member member,
@@ -103,7 +109,7 @@ public class MemberController {
 
 	@Operation(
 		summary = "회원정보 확인 (마이페이지)",
-		description = "닉네임, 이미지, 대응 개수, 팔로워 팔로잉 개수 반환")
+		description = "닉네임, 이미지, 대응 개수, 팔로워 및 팔로잉 수를 조회한다.")
 	@GetMapping
 	public ResponseEntity<MemberResponse> getMemberBySelf(
 		@AuthenticationPrincipal Member member

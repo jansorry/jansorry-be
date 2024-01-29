@@ -20,8 +20,10 @@ import com.ssafy.jansorry.action.service.ActionService;
 import com.ssafy.jansorry.member.domain.Member;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "대응 컨트롤러", description = "대응 관련 조회 및 추가, 삭제 기능이 포함되어 있음")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -29,7 +31,8 @@ public class ActionController {
 	private final ActionService actionService;
 
 	@Operation(
-		summary = "본인 대응 전체 확인 (마이페이지)")
+		summary = "본인 대응 전체 확인 (마이페이지)",
+		description = "본인이 작성한 잔소리 카드의 모든 대응을 확인한다. (무한스크롤)")
 	@GetMapping("/actions")
 	private ResponseEntity<Slice<ActionDto>> getAllActions(
 		@AuthenticationPrincipal Member member,
@@ -40,7 +43,8 @@ public class ActionController {
 	}
 
 	@Operation(
-		summary = "대응 추가")
+		summary = "대응 추가",
+		description = "잔소리 카드에 대응을 작성하여 추가한다.")
 	@PostMapping("/nags/{nagId}/actions")
 	private ResponseEntity<Void> addAction(
 		@PathVariable Long nagId,
@@ -59,7 +63,8 @@ public class ActionController {
 	}
 
 	@Operation(
-		summary = "대응 삭제")
+		summary = "대응 삭제",
+		description = "선택한 대응을 삭제한다. (soft deletion)")
 	@DeleteMapping("/actions/{actionId}")
 	private ResponseEntity<Void> removeAction(@PathVariable Long actionId) {
 		actionService.deleteAction(actionId);
@@ -67,7 +72,8 @@ public class ActionController {
 	}
 
 	@Operation(
-		summary = "메인 페이지")
+		summary = "메인 페이지",
+		description = "홈 화면으로 현재 본인이 가지고있는 카테고리의 리스트를 반환한다.(1 ~ 6)")
 	@GetMapping("/main")
 	private ResponseEntity<MainPageDto> getMainPage(
 		@AuthenticationPrincipal Member member
