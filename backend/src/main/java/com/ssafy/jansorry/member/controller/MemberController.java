@@ -1,8 +1,5 @@
 package com.ssafy.jansorry.member.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.member.domain.Member;
@@ -26,6 +24,7 @@ import com.ssafy.jansorry.member.dto.TokenResponse;
 import com.ssafy.jansorry.member.service.MemberService;
 import com.ssafy.jansorry.member.service.TokenService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,6 +38,8 @@ public class MemberController {
 	private final MemberService memberService;
 	private final TokenService tokenService;
 
+	@Operation(
+		summary = "토큰 재발급")
 	@PostMapping("/reissue")
 	public ResponseEntity<TokenReissueResponse> reissueAccessToken(
 		HttpServletRequest request, HttpServletResponse response) {
@@ -51,6 +52,8 @@ public class MemberController {
 		);
 	}
 
+	@Operation(
+		summary = "회원가입")
 	@PostMapping("/signup")
 	public ResponseEntity<SignUpResponse> addMember(
 		HttpServletResponse response,
@@ -76,6 +79,8 @@ public class MemberController {
 		);
 	}
 
+	@Operation(
+		summary = "닉네임 변경")
 	@PutMapping("/rename")
 	public ResponseEntity<MemberEditDto> editNickname(
 		@AuthenticationPrincipal Member member,
@@ -84,6 +89,8 @@ public class MemberController {
 		return ResponseEntity.ok(memberService.updateMember(member, request));
 	}
 
+	@Operation(
+		summary = "회원탈퇴")
 	@DeleteMapping("/withdraw/{oauthServerType}")
 	public ResponseEntity<Void> removeMember(
 		@AuthenticationPrincipal Member member,
@@ -94,10 +101,20 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping()
-	public ResponseEntity<MemberResponse> getMember(
+	@Operation(
+		summary = "회원정보 확인 (마이페이지)",
+		description = "닉네임, 이미지, 대응 개수, 팔로워 팔로잉 개수 반환")
+	@GetMapping
+	public ResponseEntity<MemberResponse> getMemberBySelf(
 		@AuthenticationPrincipal Member member
 	) {
-		return ResponseEntity.ok(memberService.readMember(member));
+		return ResponseEntity.ok(memberService.readMemberSelf(member));
+	}
+
+	@Operation(
+		summary = "회원 닉네임 검색")
+	@GetMapping("/search")
+	public ResponseEntity<MemberResponse> getMemberByNickName(@RequestParam(name = "nickName") String nickName) {
+		return ResponseEntity.ok(memberService.readMemberByNickName(nickName));
 	}
 }
