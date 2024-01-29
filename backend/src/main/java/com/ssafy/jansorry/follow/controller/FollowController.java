@@ -15,6 +15,7 @@ import com.ssafy.jansorry.follow.dto.MemberSearchResponse;
 import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Member;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class FollowController {
 	private final FollowService followService;
 
+	@Operation(
+		summary = "팔로우 여부 확인")
 	@GetMapping("/{toId}/check")
 	public ResponseEntity<Boolean> getFollowCheck(
 		@AuthenticationPrincipal Member member,
@@ -30,12 +33,8 @@ public class FollowController {
 		return ResponseEntity.ok(followService.readFollowCheck(member.getId(), toId));
 	}
 
-	@GetMapping("/count")
-	public ResponseEntity<FollowCountDto> getFollowCount(
-		@AuthenticationPrincipal Member member) {
-		return ResponseEntity.ok(followService.readFollowCount(member.getId()));
-	}
-
+	@Operation(
+		summary = "팔로우 추가")
 	@PostMapping("/{toId}")
 	public ResponseEntity<Void> addFollow(
 		@AuthenticationPrincipal Member member,
@@ -44,6 +43,8 @@ public class FollowController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(
+		summary = "팔로우 취소")
 	@DeleteMapping("/{toId}")
 	public ResponseEntity<Void> removeFollow(
 		@AuthenticationPrincipal Member member,

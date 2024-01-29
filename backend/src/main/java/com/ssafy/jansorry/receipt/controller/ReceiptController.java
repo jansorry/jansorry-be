@@ -14,6 +14,7 @@ import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.receipt.dto.ReceiptDto;
 import com.ssafy.jansorry.receipt.service.ReceiptService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController    //@RestController: Restful Web Service에서 사용되는 어노테이션
@@ -24,6 +25,8 @@ public class ReceiptController {
 	private final ReceiptService receiptService;
 
 	//영수증 저장하는 API
+	@Operation(
+		summary = "영수증 저장")
 	@PostMapping
 	public ResponseEntity<Void> addReceipt(    //ResponseEntity: 결과 데이터와 HTTP 상태 코드를 직접 제어할 수 있는 클래스
 		@AuthenticationPrincipal Member member,
@@ -34,6 +37,8 @@ public class ReceiptController {
 	}
 
 	// 영수증 개수 확인 API - 영수증 개수를 0~3까지 반환
+	@Operation(
+		summary = "영수증 개수 확인")
 	@GetMapping
 	public ResponseEntity<Long> getReceiptCount(
 		@AuthenticationPrincipal Member member    //로그인 세션 정보
@@ -43,6 +48,8 @@ public class ReceiptController {
 	}
 
 	//영수증 조회하는 API - 3개중 {seq}번째의 영수증을 반환한다.
+	@Operation(
+		summary = "영수증 확인")
 	@GetMapping("/{seq}")
 	public ResponseEntity<ReceiptDto> getReceipt(
 		@AuthenticationPrincipal Member member,    //로그인 세션 정보
@@ -53,6 +60,8 @@ public class ReceiptController {
 	}
 
 	// 영수증 삭제하는 API - 3개 중 {seq}번째의 영수증을 반환
+	@Operation(
+		summary = "영수증 삭제")
 	@DeleteMapping("/{seq}")
 	public ResponseEntity<Void> removeReceipt(
 		@AuthenticationPrincipal Member member,
