@@ -8,7 +8,7 @@ public record FeedInfoResponse(
 	String nickname,
 	String nag,
 	String action,
-	String category,
+	Long category,
 	String createdAt
 ) {
 }
