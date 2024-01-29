@@ -92,14 +92,14 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping()
+	@GetMapping
 	public ResponseEntity<MemberResponse> getMemberBySelf(
 		@AuthenticationPrincipal Member member
 	) {
 		return ResponseEntity.ok(memberService.readMemberSelf(member));
 	}
 
-	@GetMapping
+	@GetMapping("/search")
 	public ResponseEntity<MemberResponse> getMemberByNickName(
 		@AuthenticationPrincipal Member member,
 		@RequestParam(name = "nickName") String nickName
