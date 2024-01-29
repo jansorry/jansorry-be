@@ -15,6 +15,10 @@ public class FeedService {
 	private final FeedRepository feedRepository;
 
 	public Slice<FeedInfoResponse> readLiveFeeds(Long lastActionId, Pageable pageable) {
-		return feedRepository.searchBySlice(lastActionId, pageable);
+		return feedRepository.searchFeedsByTime(lastActionId, pageable);
+	}
+
+	public Slice<FeedInfoResponse> readGenerationFeeds(Long lastActionId, int age, Pageable pageable) {
+		return feedRepository.searchFeedsByAgeRange(lastActionId, age, pageable);
 	}
 }

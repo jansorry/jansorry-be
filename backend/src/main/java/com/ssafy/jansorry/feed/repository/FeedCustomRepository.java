@@ -6,5 +6,7 @@ import org.springframework.data.domain.Slice;
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 
 public interface FeedCustomRepository {
-	Slice<FeedInfoResponse> searchBySlice(Long lastActionId, Pageable pageable);
+	Slice<FeedInfoResponse> searchFeedsByTime(Long lastActionId, Pageable pageable);
+
+	Slice<FeedInfoResponse> searchFeedsByAgeRange(Long lastActionId, int age, Pageable pageable);
 }

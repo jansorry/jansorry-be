@@ -2,6 +2,7 @@ package com.ssafy.jansorry.feed.repository;
 
 import static com.ssafy.jansorry.action.domain.QAction.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Slice<FeedInfoResponse> searchBySlice(Long lastActionId, Pageable pageable) {
+	public Slice<FeedInfoResponse> searchFeedsByTime(Long lastActionId, Pageable pageable) {
 		List<Action> actions = queryFactory
 			.selectFrom(action)
 			.where(
@@ -32,6 +33,27 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			)
 			.orderBy(action.id.desc()) // 최신순으로 보여줌
 			.limit(pageable.getPageSize() + 1) // limit보다 한 개 더 들고온다.
+			.fetch();
+
+		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
+		if (CollectionUtils.isEmpty(feedInfoResponses)) {
+			return new SliceImpl<>(feedInfoResponses, pageable, false);
+		}
+		return checkLastPage(pageable, feedInfoResponses);
+	}
+
+	@Override
+	public Slice<FeedInfoResponse> searchFeedsByAgeRange(Long lastActionId, int age, Pageable pageable) {
+		LocalDateTime currentDate = LocalDateTime.now();
+
+		List<Action> actions = queryFactory
+			.selectFrom(action)
+			.where(
+				ltActionId(lastActionId),
+				action.member.birth.subtract(currentDate.getYear()).abs().between(age - 1, age + 8)
+			)
+			.orderBy(action.id.desc())
+			.limit(pageable.getPageSize() + 1)
 			.fetch();
 
 		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
