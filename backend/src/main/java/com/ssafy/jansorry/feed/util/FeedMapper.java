@@ -17,7 +17,7 @@ public class FeedMapper {
 			.nickname(action.getMember().getNickname())
 			.nag(action.getNag().getContent())
 			.action(action.getContent())
-			.category(action.getNag().getCategory().getGroupType().name())
+			.category(action.getNag().getCategory().getGroupType().getValue())
 			.createdAt(action.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 			.build();
 	}
