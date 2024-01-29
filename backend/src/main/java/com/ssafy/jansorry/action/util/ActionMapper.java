@@ -23,11 +23,9 @@ public class ActionMapper {
 
 	public static ActionDto toDto(Action action) {
 		return ActionDto.builder()
-			.nagId(action.getNag().getId())
 			.categoryId(action.getNag().getCategory().getId())
+			.actionId(action.getId())
 			.content(action.getContent())
-			.createdAt(action.getCreatedAt())
-			.price(action.getNag().getPrice())
 			.build();
 	}
 

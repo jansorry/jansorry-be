@@ -5,10 +5,12 @@ import lombok.Builder;
 @Builder
 public record FeedInfoResponse(
 	Long memberId,
+	Long actionId,
 	String nickname,
 	String nag,
 	String action,
-	Long category,
+	Long categoryId,
+	String categoryTitle,
 	String createdAt
 ) {
 }

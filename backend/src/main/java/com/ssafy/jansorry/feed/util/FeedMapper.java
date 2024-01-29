@@ -14,10 +14,12 @@ public class FeedMapper {
 	public static FeedInfoResponse fromAction(Action action) {
 		return FeedInfoResponse.builder()
 			.memberId(action.getMember().getId())
+			.actionId(action.getId())
 			.nickname(action.getMember().getNickname())
 			.nag(action.getNag().getContent())
 			.action(action.getContent())
-			.category(action.getNag().getCategory().getGroupType().getValue())
+			.categoryId(action.getNag().getCategory().getId())
+			.categoryTitle(action.getNag().getCategory().getGroupType().getValue())
 			.createdAt(action.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 			.build();
 	}
