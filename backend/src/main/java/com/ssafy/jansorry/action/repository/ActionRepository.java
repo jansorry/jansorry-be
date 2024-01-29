@@ -21,4 +21,5 @@ public interface ActionRepository extends JpaRepository<Action, Long> {
 	@Query("SELECT c.groupType FROM Action a JOIN a.nag n JOIN n.category c WHERE a.member.id = :memberId AND a.deleted = false")
 	List<Long> findGroupTypesByMemberId(@Param("memberId") Long memberId);
 
+	Long countAllByMemberIdAndDeletedFalse(Long memberId);
 }

@@ -2,17 +2,17 @@ package com.ssafy.jansorry.member.service;
 
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.exception.ErrorCode;
-import com.ssafy.jansorry.follow.domain.Follow;
-import com.ssafy.jansorry.follow.repository.FollowRepository;
+import com.ssafy.jansorry.follow.dto.FollowCountDto;
+import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Gender;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.member.domain.OauthId;
@@ -33,9 +33,10 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final GenderRepository genderRepository;
-	private final FollowRepository followRepository;
+	private final ActionRepository actionRepository;
 	private final OauthService oauthService;
 	private final TokenService tokenService;
+	private final FollowService followService;
 
 	public LoginDto createMember(SignUpRequest request) {
 		Gender gender = genderRepository.findById(request.genderId())
@@ -104,15 +105,31 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
-	public MemberResponse readMember(Member member) {
-		List<Follow> follows = followRepository.findAllByMember(member);
-		member.setFollows(follows);
+	// 스스로의 정보 조회
+	public MemberResponse readMemberSelf(Member member) {
+		FollowCountDto followCountDto = followService.readFollowCount(member.getId());
 
 		return MemberResponse.builder()
 			.nickname(member.getNickname())
 			.imageUrl(member.getImageUrl())
-			.followingCnt((long)member.getFollows().size())
-			.followerCnt(followRepository.countByToId(member.getId()))
+			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(member.getId()))
+			.followerCnt(followCountDto.followerCount())
+			.followingCnt(followCountDto.followingCount())
+			.build();
+	}
+
+	// 검색 시 다른 멤버의 정보 조회
+	public MemberResponse readMemberByNickName(String nickName) {
+		Member searchedMember = memberRepository.findByNickname(nickName)
+			.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
+		FollowCountDto followCountDto = followService.readFollowCount(searchedMember.getId());
+
+		return MemberResponse.builder()
+			.nickname(nickName)
+			.imageUrl(searchedMember.getImageUrl())
+			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(searchedMember.getId()))
+			.followerCnt(followCountDto.followerCount())
+			.followingCnt(followCountDto.followingCount())
 			.build();
 	}
 }
