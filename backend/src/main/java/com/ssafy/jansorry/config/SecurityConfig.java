@@ -31,8 +31,18 @@ public class SecurityConfig {
 			.cors(AbstractHttpConfigurer::disable)
 			.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin(AbstractHttpConfigurer::disable)
-			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/oauth/kakao", "/api/v1/oauth/redirected/kakao",
-					"/api/v1/oauth/login/**", "/api/v1/members/signup", "/api/v1/ping", "/api/v1/members/reissue")
+			.authorizeHttpRequests(auth -> auth.requestMatchers(
+					"/api/v1/oauth/kakao",
+					"/api/v1/oauth/redirected/kakao",
+					"/api/v1/oauth/login/**",
+					"/api/v1/members/signup",
+					"/api/v1/members/reissue",
+					"/api/v1/ping",
+					// allow swagger url
+					"/swagger-ui",
+					"/swagger-ui/**",
+					"/v3/**"
+				)
 				.permitAll()
 				.anyRequest()
 				.authenticated());

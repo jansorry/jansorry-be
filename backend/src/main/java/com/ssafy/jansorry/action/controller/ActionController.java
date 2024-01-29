@@ -19,6 +19,7 @@ import com.ssafy.jansorry.action.dto.MainPageDto;
 import com.ssafy.jansorry.action.service.ActionService;
 import com.ssafy.jansorry.member.domain.Member;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class ActionController {
 	private final ActionService actionService;
 
+	@Operation(
+		summary = "본인 대응 전체 확인 (마이페이지)")
 	@GetMapping("/actions")
 	private ResponseEntity<Slice<ActionDto>> getAllActions(
 		@AuthenticationPrincipal Member member,
@@ -36,6 +39,8 @@ public class ActionController {
 		return ResponseEntity.ok(actionService.readAllActions(lastActionId, member.getId(), pageable));
 	}
 
+	@Operation(
+		summary = "대응 추가")
 	@PostMapping("/nags/{nagId}/actions")
 	private ResponseEntity<Void> addAction(
 		@PathVariable Long nagId,
@@ -46,17 +51,23 @@ public class ActionController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(
+		summary = "대응 확인")
 	@GetMapping("/actions/{actionId}")
 	private ResponseEntity<ActionDto> getAction(@PathVariable Long actionId) {
 		return ResponseEntity.ok(actionService.readAction(actionId));
 	}
 
+	@Operation(
+		summary = "대응 삭제")
 	@DeleteMapping("/actions/{actionId}")
 	private ResponseEntity<Void> removeAction(@PathVariable Long actionId) {
 		actionService.deleteAction(actionId);
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(
+		summary = "메인 페이지")
 	@GetMapping("/main")
 	private ResponseEntity<MainPageDto> getMainPage(
 		@AuthenticationPrincipal Member member

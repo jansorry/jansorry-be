@@ -19,6 +19,7 @@ import com.ssafy.jansorry.member.dto.LoginDto;
 import com.ssafy.jansorry.member.dto.LoginResponse;
 import com.ssafy.jansorry.member.service.OauthService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,8 @@ public class OauthController {
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(
+		summary = "카카오 로그인")
 	@GetMapping("/login/{oauthServerType}")
 	public ResponseEntity<LoginResponse> login(
 		HttpServletResponse response,
@@ -76,6 +79,8 @@ public class OauthController {
 			.build());
 	}
 
+	@Operation(
+		summary = "로그아웃")
 	@PostMapping("/logout/{oauthServerType}")
 	public ResponseEntity<KakaoLogoutResponse> logout(
 		@AuthenticationPrincipal Member member,
