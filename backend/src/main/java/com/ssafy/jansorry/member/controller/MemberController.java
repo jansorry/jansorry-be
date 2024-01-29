@@ -100,10 +100,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<MemberResponse> getMemberByNickName(
-		@AuthenticationPrincipal Member member,
-		@RequestParam(name = "nickName") String nickName
-	) {
+	public ResponseEntity<MemberResponse> getMemberByNickName(@RequestParam(name = "nickName") String nickName) {
 		return ResponseEntity.ok(memberService.readMemberByNickName(nickName));
 	}
 }
