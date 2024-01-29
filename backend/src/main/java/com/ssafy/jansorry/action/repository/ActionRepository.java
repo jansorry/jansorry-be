@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.jansorry.action.domain.Action;
 
 @Repository
-public interface ActionRepository extends JpaRepository<Action, Long> {
+public interface ActionRepository extends JpaRepository<Action, Long>, ActionCustomRepository {
 	List<Action> findAllByMemberIdAndDeletedFalse(Long memberId);
 
 	Optional<Action> findActionByIdAndDeletedFalse(Long actionId);
