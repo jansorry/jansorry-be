@@ -1,7 +1,7 @@
 package com.ssafy.jansorry.action.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
@@ -27,10 +28,12 @@ public class ActionController {
 	private final ActionService actionService;
 
 	@GetMapping("/actions")
-	private ResponseEntity<List<ActionDto>> getAllActions(
-		@AuthenticationPrincipal Member member
+	private ResponseEntity<Slice<ActionDto>> getAllActions(
+		@AuthenticationPrincipal Member member,
+		@RequestParam(required = false) Long lastActionId,
+		Pageable pageable
 	) {
-		return ResponseEntity.ok(actionService.readAllActions(member.getId()));
+		return ResponseEntity.ok(actionService.readAllActions(lastActionId, member.getId(), pageable));
 	}
 
 	@PostMapping("/nags/{nagId}/actions")
@@ -63,7 +66,7 @@ public class ActionController {
 	@GetMapping("/main")
 	private ResponseEntity<MainPageDto> getMainPage(
 		@AuthenticationPrincipal Member member
-	){
+	) {
 		return ResponseEntity.ok(actionService.readMainPage(member.getId()));
 	}
 }
