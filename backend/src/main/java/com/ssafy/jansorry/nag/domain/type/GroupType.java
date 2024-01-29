@@ -6,12 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum GroupType {
-	LEARNING(1L),
-	APPEARANCE(2L),
-	LOVE(3L),
-	CAREER(4L),
-	FAMILY(5L),
-	OTHER(6L);
+	LEARNING("학업/진로"),
+	APPEARANCE("건강/외모"),
+	LOVE("연애/결혼"),
+	CAREER("취업/직장"),
+	FAMILY("가족/자녀"),
+	OTHER("기타");
 
-	private final Long value;
+	private final String value;
 }
