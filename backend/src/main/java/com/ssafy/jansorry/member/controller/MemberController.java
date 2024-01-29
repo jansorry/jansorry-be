@@ -1,8 +1,5 @@
 package com.ssafy.jansorry.member.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.member.domain.Member;
@@ -95,9 +93,17 @@ public class MemberController {
 	}
 
 	@GetMapping()
-	public ResponseEntity<MemberResponse> getMember(
+	public ResponseEntity<MemberResponse> getMemberBySelf(
 		@AuthenticationPrincipal Member member
 	) {
-		return ResponseEntity.ok(memberService.readMember(member));
+		return ResponseEntity.ok(memberService.readMemberSelf(member));
+	}
+
+	@GetMapping
+	public ResponseEntity<MemberResponse> getMemberByNickName(
+		@AuthenticationPrincipal Member member,
+		@RequestParam(name = "nickName") String nickName
+	) {
+		return ResponseEntity.ok(memberService.readMemberByNickName(nickName));
 	}
 }
