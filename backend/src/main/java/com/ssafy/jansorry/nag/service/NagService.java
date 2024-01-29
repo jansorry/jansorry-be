@@ -3,14 +3,17 @@ package com.ssafy.jansorry.nag.service;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 import static com.ssafy.jansorry.nag.util.NagMapper.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.nag.domain.Nag;
+import com.ssafy.jansorry.nag.domain.type.GroupType;
+import com.ssafy.jansorry.nag.dto.CategoryDto;
 import com.ssafy.jansorry.nag.dto.NagDto;
 import com.ssafy.jansorry.nag.repository.NagRepository;
 import com.ssafy.jansorry.nag.util.NagMapper;
@@ -28,10 +31,33 @@ public class NagService {
 		return toDto(nag);
 	}
 
-	public List<NagDto> readAllNags() {// dto 전환 추가하기 (가격 뺀 버전으로)
-		return nagRepository.findAllByDeletedFalse()
-			.stream()
-			.map(NagMapper::toDto)
-			.collect(Collectors.toList());
+	public List<CategoryDto> readAllNags() {
+		List<CategoryDto> categoryDtos = new ArrayList<>();
+		List<NagDto> nagDtos = new ArrayList<>();
+
+		Long categoryId = 1L;
+		List<Nag> nags = nagRepository.findAllByDeletedFalse();
+
+		for (Nag nag : nags) {
+			if (!Objects.equals(categoryId, nag.getCategory().getId())) {
+				categoryDtos.add(CategoryDto.builder()
+					.categoryId(categoryId)
+					.title(GroupType.values()[categoryId.intValue() - 1].getValue())
+					.nags(nagDtos)
+					.build());
+				nagDtos = new ArrayList<>();
+				categoryId = nag.getCategory().getId();
+			} else {
+				nagDtos.add(NagMapper.toDto(nag));
+			}
+		}
+
+		categoryDtos.add(CategoryDto.builder()
+			.categoryId(categoryId)
+			.title(GroupType.values()[categoryId.intValue() - 1].getValue())
+			.nags(nagDtos)
+			.build());
+
+		return categoryDtos;
 	}
 }
