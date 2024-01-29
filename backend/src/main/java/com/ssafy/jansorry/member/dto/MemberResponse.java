@@ -6,6 +6,7 @@ import lombok.Builder;
 public record MemberResponse(
 	String nickname,
 	Long imageUrl,
+	Long actionCnt,
 	Long followerCnt,
 	Long followingCnt
 ) {
