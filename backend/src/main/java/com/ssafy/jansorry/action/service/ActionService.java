@@ -5,8 +5,9 @@ import static com.ssafy.jansorry.exception.ErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -16,7 +17,6 @@ import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
 import com.ssafy.jansorry.action.dto.MainPageDto;
 import com.ssafy.jansorry.action.repository.ActionRepository;
-import com.ssafy.jansorry.action.util.ActionMapper;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.nag.domain.Nag;
@@ -31,11 +31,8 @@ public class ActionService {
 	private final NagRepository nagRepository;
 	private final ActionRepository actionRepository;
 
-	public List<ActionDto> readAllActions(Long memberId) {
-		return actionRepository.findAllByMemberIdAndDeletedFalse(memberId)
-			.stream()
-			.map(ActionMapper::toDto)
-			.collect(Collectors.toList());
+	public Slice<ActionDto> readAllActions(Long lastActionId, Long memberId, Pageable pageable) {
+		return actionRepository.searchActionsByMember(lastActionId, memberId, pageable);
 	}
 
 	public void createAction(Long nagId, Member member, ActionCreationDto actionCreationDto) {
