@@ -91,6 +91,26 @@ public class RedisConfig {
 	}
 
 	@Bean
+	public RedisTemplate<String, Object> followZSetRedisTemplate() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(FOLLOW_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer()); // ZSet 값에 대한 직렬화
+
+		return redisTemplate;
+	}
+
+	@Bean
+	public RedisTemplate<String, Object> favoriteZSetRedisTemplate() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(FAVORITE_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer()); // ZSet 값에 대한 직렬화
+
+		return redisTemplate;
+	}
+
+	@Bean
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
 	}
