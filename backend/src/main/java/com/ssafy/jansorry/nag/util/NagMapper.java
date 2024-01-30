@@ -8,6 +8,7 @@ public class NagMapper {
 	public static NagDto toDto(Nag nag) {
 		return NagDto.builder()
 			.nagId(nag.getId())
+			.categoryId(nag.getCategory().getId())
 			.content(nag.getContent())
 			.price(nag.getPrice())
 			.build();
