@@ -3,6 +3,7 @@ package com.ssafy.jansorry.feed.controller;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 import com.ssafy.jansorry.feed.service.FeedService;
+import com.ssafy.jansorry.member.domain.Member;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,11 +42,24 @@ public class FeedController {
 		summary = "연령대 별 피드 조회",
 		description = "해당 연령대의 피드를 최신 순으로 조회한다. (무한스크롤)")
 	@GetMapping("/generation")
-	public ResponseEntity<Slice<FeedInfoResponse>> getTeenageFeeds(
+	public ResponseEntity<Slice<FeedInfoResponse>> getGenerationFeeds(
 		@RequestParam(required = false) Long lastActionId,
 		@RequestParam int age,
 		Pageable pageable
 	) {
 		return ResponseEntity.ok(feedService.readGenerationFeeds(lastActionId, age, pageable));
+	}
+
+	// 팔로잉 피드 조회
+	@Operation(
+		summary = "팔로잉 피드 조회",
+		description = "내가 팔로잉 하고 있는 사용자들의 피드를 최신 순으로 조회한다. (무한스크롤)")
+	@GetMapping("/following")
+	public ResponseEntity<Slice<FeedInfoResponse>> getFollowingFeeds(
+		@RequestParam(required = false) Long lastActionId,
+		@AuthenticationPrincipal Member member,
+		Pageable pageable
+	) {
+		return ResponseEntity.ok(feedService.readFollowingFeeds(member.getId(), lastActionId, pageable));
 	}
 }
