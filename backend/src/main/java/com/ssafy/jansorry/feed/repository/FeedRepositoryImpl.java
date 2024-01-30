@@ -4,6 +4,7 @@ import static com.ssafy.jansorry.action.domain.QAction.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -51,6 +52,26 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			.where(
 				ltActionId(lastActionId),
 				action.member.birth.subtract(currentDate.getYear()).abs().between(age - 1, age + 8)
+			)
+			.orderBy(action.id.desc())
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
+		if (CollectionUtils.isEmpty(feedInfoResponses)) {
+			return new SliceImpl<>(feedInfoResponses, pageable, false);
+		}
+		return checkLastPage(pageable, feedInfoResponses);
+	}
+
+	@Override
+	public Slice<FeedInfoResponse> searchFeedsByFollow(Set<Long> memberIdSet, Long lastActionId,
+		Pageable pageable) {
+		List<Action> actions = queryFactory
+			.selectFrom(action)
+			.where(
+				action.member.id.in(memberIdSet),
+				ltActionId(lastActionId)
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
