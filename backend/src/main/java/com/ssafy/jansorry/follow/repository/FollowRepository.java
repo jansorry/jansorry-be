@@ -9,7 +9,7 @@ import com.ssafy.jansorry.follow.domain.Follow;
 import com.ssafy.jansorry.member.domain.Member;
 
 @Repository
-public interface FollowRepository extends JpaRepository<Follow, Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long>, FollowCustomRepository {
 	Long countByToId(Long toId);
 
 	List<Follow> findAllByMember(Member member);
