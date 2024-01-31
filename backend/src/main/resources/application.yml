@@ -45,7 +45,11 @@ spring:
     kakao:
       client_id: ${CLIENT_ID}
       redirect_uri: ${REDIRECT_URI}
-
+  batch:
+    job:
+      enabled: false # 서버 재시작시 배치 자동실행 방지
+    jdbc:
+      initialize-schema: always
 #  profiles:
 #    active: jwt, api
 

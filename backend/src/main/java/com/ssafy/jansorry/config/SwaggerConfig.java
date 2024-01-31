@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import lombok.RequiredArgsConstructor;
 
 @OpenAPIDefinition(
-	info = @Info(title = "jansorry app",
+	info = @Info(title = "jansorry (잔쏘리)",
 		description = "jansorry api document",
 		version = "v1"))
 @RequiredArgsConstructor

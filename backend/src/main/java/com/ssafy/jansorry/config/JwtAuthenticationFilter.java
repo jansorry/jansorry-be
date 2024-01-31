@@ -32,33 +32,22 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		throws IOException, ServletException {
 		try {
 			String token = tokenService.resolveToken((HttpServletRequest)request).replace("Bearer ", "");
-			System.out.println("filter token = " + token);
 
 			if (tokenService.validateToken(token)) { // access_token 유효할 때
-				System.out.println("valid!! token");
 				Authentication authentication = tokenService.readAuthentication(token);
-				System.out.println("authentication : " + authentication);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			} else { // access_token 유효하지 않을 때 재발급
-				System.out.println("invalid!! token.. reissue...");
 				String accessToken =
 					tokenService.reissueAccessToken((HttpServletRequest)request,
 						(HttpServletResponse)response).accessToken();
-				System.out.println("reissued access token : " + accessToken);
 				((HttpServletResponse)response).setHeader("Authorization", accessToken);
 				Authentication authentication = tokenService.readAuthentication(accessToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (BaseException e) {
-			System.out.println("base exception");
 			request.setAttribute("errorCode", e.getErrorCode());
 			request.setAttribute("httpStatus", HttpStatus.valueOf(e.getErrorCode().getErrorCode()));
-		} catch (SignatureException e) {
-			System.out.println("signature exception");
-			request.setAttribute("errorCode", UNAUTHORIZED);
-			request.setAttribute("httpStatus", HttpStatus.UNAUTHORIZED);
-		} catch (MalformedJwtException e) {
-			System.out.println("malformed jwt exception");
+		} catch (SignatureException | MalformedJwtException e) {
 			request.setAttribute("errorCode", UNAUTHORIZED);
 			request.setAttribute("httpStatus", HttpStatus.UNAUTHORIZED);
 		} catch (IllegalArgumentException e) {
