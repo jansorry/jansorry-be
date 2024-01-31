@@ -13,4 +13,8 @@ public interface FeedCustomRepository {
 	Slice<FeedInfoResponse> searchFeedsByAgeRange(Long lastActionId, int age, Pageable pageable);
 
 	Slice<FeedInfoResponse> searchFeedsByFollow(Set<Long> memberIdSet, Long lastActionId, Pageable pageable);
+
+	Slice<FeedInfoResponse> searchFeedsByFavorites(Set<String> keys, Set<Long> longKeys,
+		Pageable pageable);
+
 }

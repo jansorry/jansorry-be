@@ -9,12 +9,16 @@ import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.jansorry.action.domain.Action;
+import com.ssafy.jansorry.favorite.dto.FavoriteDto;
+import com.ssafy.jansorry.feed.dto.FeedDto;
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 import com.ssafy.jansorry.feed.util.FeedMapper;
 
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FeedRepositoryImpl implements FeedCustomRepository {
 	private final JPAQueryFactory queryFactory;
+	private final RedisTemplate<String, Object> favoriteRedisTemplate;
 
 	@Override
 	public Slice<FeedInfoResponse> searchFeedsByTime(Long lastActionId, Pageable pageable) {
@@ -82,6 +87,53 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			return new SliceImpl<>(feedInfoResponses, pageable, false);
 		}
 		return checkLastPage(pageable, feedInfoResponses);
+	}
+
+	@Override
+	public Slice<FeedInfoResponse> searchFeedsByFavorites(Set<String> keys, Set<Long> longKeys, Pageable pageable) {
+		// QueryDSL 쿼리 실행
+		List<FeedDto> feeds = queryFactory
+			.select(Projections.fields(FeedDto.class,
+				action.id.as("id"),
+				action.member,
+				action.nag,
+				action.nag.content.as("content"),
+				action.createdAt
+			))
+			.from(action)
+			.orderBy(action.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		// 각 Feed에 대한 추가 정보 설정 (예: 즐겨찾기 수)
+		feeds.forEach(feed -> {
+			long size = calculateFavoriteSize(feed.getId(), keys, longKeys);
+			feed.setSize(size);
+		});
+
+		// size 값을 기준으로 결과 리스트를 내림차순으로 정렬
+		feeds.sort((feed1, feed2) -> Long.compare(feed2.getSize(), feed1.getSize()));
+
+		// 마지막 페이지인지 확인
+		boolean hasNext = feeds.size() >= pageable.getPageSize();
+
+		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromFeedDtos(feeds);
+		if (CollectionUtils.isEmpty(feedInfoResponses)) {
+			return new SliceImpl<>(feedInfoResponses, pageable, false);
+		}
+		return new SliceImpl<>(feedInfoResponses, pageable, hasNext);
+	}
+
+	private int calculateFavoriteSize(Long actionId, Set<String> keys, Set<Long> longKeys) {
+		if (longKeys.contains(actionId)) {
+			String key = actionId.toString();
+			if (keys.contains(key)) {
+				FavoriteDto favoriteDto = (FavoriteDto)favoriteRedisTemplate.opsForValue().get(key);
+				return favoriteDto != null ? favoriteDto.getMemberIdSet().size() : 0;
+			}
+		}
+		return 0;
 	}
 
 	// 동적 쿼리를 위한 BooleanExpression
