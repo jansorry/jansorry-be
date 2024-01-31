@@ -98,7 +98,7 @@ public class FollowService {
 	}
 
 	// redis 로부터 해당 FollowDto 를 반환하는 메서드
-	private FollowDto getFollowDto(String key) {
+	public FollowDto getFollowDto(String key) {
 		return (FollowDto)followRedisTemplate.opsForValue().get(key);
 	}
 

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 import com.ssafy.jansorry.action.domain.Action;
+import com.ssafy.jansorry.feed.dto.FeedDto;
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 
 public class FeedMapper {
@@ -30,6 +31,28 @@ public class FeedMapper {
 		}
 		return actions.stream()
 			.map(FeedMapper::fromAction)
+			.collect(Collectors.toList());
+	}
+
+	public static FeedInfoResponse fromFeedDto(FeedDto feedDto) {
+		return FeedInfoResponse.builder()
+			.memberId(feedDto.getMember().getId())
+			.actionId(feedDto.getId())
+			.nickname(feedDto.getMember().getNickname())
+			.nag(feedDto.getNag().getContent())
+			.action(feedDto.getContent())
+			.categoryId(feedDto.getNag().getCategory().getId())
+			.categoryTitle(feedDto.getNag().getCategory().getGroupType().getValue())
+			.createdAt(feedDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+			.build();
+	}
+
+	public static List<FeedInfoResponse> fromFeedDtos(List<FeedDto> feedDtos) {
+		if (CollectionUtils.isEmpty(feedDtos)) {
+			return Collections.emptyList();
+		}
+		return feedDtos.stream()
+			.map(FeedMapper::fromFeedDto)
 			.collect(Collectors.toList());
 	}
 }
