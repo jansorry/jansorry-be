@@ -1,6 +1,5 @@
 package com.ssafy.jansorry.follow.domain;
 
-import com.ssafy.jansorry.common.BaseEntity;
 import com.ssafy.jansorry.member.domain.Member;
 
 import jakarta.persistence.Entity;

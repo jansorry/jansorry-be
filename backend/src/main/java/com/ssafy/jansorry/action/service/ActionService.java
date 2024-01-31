@@ -5,6 +5,8 @@ import static com.ssafy.jansorry.exception.ErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,6 +18,7 @@ import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
 import com.ssafy.jansorry.action.dto.MainPageDto;
+import com.ssafy.jansorry.action.dto.NagStatisticDto;
 import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
@@ -34,6 +37,24 @@ public class ActionService {
 	public Slice<ActionDto> readAllActions(Long lastActionId, Long memberId, Pageable pageable) {
 		return actionRepository.searchActionsByMember(lastActionId, memberId, pageable);
 	}
+
+	public List<NagStatisticDto> readAllNagStatistic(Long memberId) {
+		List<Action> actions = actionRepository.findAllByMemberIdAndDeletedFalse(memberId);
+
+		// 개수 통계
+		Map<Long, Long> countMap = actions.stream()
+			.collect(Collectors.groupingBy(
+				action -> action.getNag().getId(),
+				Collectors.counting()
+			));
+
+		// 통계 dto 리스트 구성
+		return actions.stream()
+			.map(action -> toStatisticDto(action, countMap.get(action.getNag().getId())))
+			.distinct()
+			.collect(Collectors.toList());
+	}
+
 
 	public void createAction(Long nagId, Member member, ActionCreationDto actionCreationDto) {
 		Nag nag = nagRepository.findNagById(nagId)

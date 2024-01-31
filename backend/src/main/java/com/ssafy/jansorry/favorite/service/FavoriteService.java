@@ -1,6 +1,9 @@
 package com.ssafy.jansorry.favorite.service;
 
+import static com.ssafy.jansorry.favorite.domain.type.RedisKeyType.*;
+
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashSet;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.jansorry.favorite.dto.FavoriteDto;
 import com.ssafy.jansorry.favorite.dto.FavoriteInfoDto;
-import com.ssafy.jansorry.favorite.repository.FavoriteRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FavoriteService {
 	private final RedisTemplate<String, Object> favoriteRedisTemplate;
-	private final FavoriteRepository favoriteRepository;
+	private final RedisTemplate<String, Object> favoriteZSetRedisTemplate;
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
 	public FavoriteInfoDto readFavoriteInfo(Long actionId, Long memberId) {
@@ -47,8 +49,7 @@ public class FavoriteService {
 		String key = actionId.toString();
 		FavoriteDto favoriteDto = getFavoriteDto(key);
 
-		if (isCreate) {
-			// 좋아요 추가
+		if (isCreate) {// 좋아요 추가
 			if (favoriteDto == null) {
 				favoriteDto = FavoriteDto.builder()
 					.memberIdSet(new HashSet<>())
@@ -56,15 +57,15 @@ public class FavoriteService {
 					.build();
 			}
 			favoriteDto.addFavorite(memberId);
-			updateFavoriteDto(key, favoriteDto); // 좋아요 업데이트
-			return;
+		} else {// 좋아요 취소
+			if (favoriteDto == null) {
+				return; // redis 에 키가 없으면 (즉, favoriteDto가 null이면) 바로 리턴
+			}
+			favoriteDto.removeFavorite(memberId);
 		}
-		// 좋아요 취소
-		if (favoriteDto == null) {
-			return; // Redis에 키가 없으면 (즉, favoriteDto가 null이면) 바로 리턴
-		}
-		favoriteDto.removeFavorite(memberId);
-		updateFavoriteDto(key, favoriteDto); // 좋아요 업데이트
+
+		updateFavoriteDto(key, favoriteDto);// 좋아요 업데이트
+		updateFavoriteUpdatesZSet(actionId, favoriteDto.getUpdatedAt());// ZSet에 업데이트 정보 추가
 	}
 
 	// redis 로부터 해당 FavoriteDto 를 반환하는 메서드
@@ -77,10 +78,9 @@ public class FavoriteService {
 		favoriteRedisTemplate.opsForValue().set(key, updatedFavoriteDto);
 	}
 
-	// batch & scheduler: redis to mysql
-	public void synchronizeFavorites() {
-		// Redis 데이터를 MySQL에 동기화하는 로직 구현
-
-		// todo: 모든 좋아요가 삭제되있다면 batch에 반영 후, redis에서 해당 key,value 완전 제거하기
+	// ZSet에 좋아요 업데이트 정보를 추가하는 메서드
+	private void updateFavoriteUpdatesZSet(Long actionId, LocalDateTime updatedAt) {
+		double score = updatedAt.toEpochSecond(ZoneOffset.UTC);
+		favoriteZSetRedisTemplate.opsForZSet().add(FAVORITE_UPDATES_ZSET.getValue(), actionId.toString(), score);
 	}
 }
