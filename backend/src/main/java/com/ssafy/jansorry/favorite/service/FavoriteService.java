@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.favorite.service;
 
+import static com.ssafy.jansorry.favorite.domain.type.RedisKeyType.*;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
@@ -19,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteService {
 	private final RedisTemplate<String, Object> favoriteRedisTemplate;
 	private final RedisTemplate<String, Object> favoriteZSetRedisTemplate;
-	public static final String FAVORITE_UPDATES_ZSET = "favorite:updates";
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
 	public FavoriteInfoDto readFavoriteInfo(Long actionId, Long memberId) {
@@ -80,6 +81,6 @@ public class FavoriteService {
 	// ZSet에 좋아요 업데이트 정보를 추가하는 메서드
 	private void updateFavoriteUpdatesZSet(Long actionId, LocalDateTime updatedAt) {
 		double score = updatedAt.toEpochSecond(ZoneOffset.UTC);
-		favoriteZSetRedisTemplate.opsForZSet().add(FAVORITE_UPDATES_ZSET, actionId.toString(), score);
+		favoriteZSetRedisTemplate.opsForZSet().add(FAVORITE_UPDATES_ZSET.getValue(), actionId.toString(), score);
 	}
 }

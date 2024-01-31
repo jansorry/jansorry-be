@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.follow.service;
 
+import static com.ssafy.jansorry.follow.domain.type.RedisKeyType.*;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashSet;
@@ -18,16 +20,13 @@ public class FollowService {
 	private final RedisTemplate<String, Object> followRedisTemplate;
 	private final RedisTemplate<String, Object> followZSetRedisTemplate;
 
-	public static final String FOLLOW_UPDATES_ZSET = "follow:updates";
-	private final String FOLLOWING = "following:", FOLLOWER = "follower:";
-
 	/**
 	 * @param fromId : 주체
 	 * @param toId : 대상
 	 * @return : 주체 -> 대상 팔로우 여부 반환
 	 */
 	public Boolean readFollowCheck(Long fromId, Long toId) {
-		String followerKey = FOLLOWER + toId.toString();
+		String followerKey = FOLLOWER.getValue() + toId.toString();
 		FollowDto followerDto = getFollowDto(followerKey);
 		return followerDto.getMemberIdSet().contains(fromId);
 	}
@@ -38,8 +37,8 @@ public class FollowService {
 	 * 해당 멤버의 팔로워수와 팔로잉 수를 반환한다.
 	 */
 	public FollowCountDto readFollowCount(Long memberId) {
-		String followerKey = FOLLOWER + memberId.toString();
-		String followingKey = FOLLOWING + memberId.toString();
+		String followerKey = FOLLOWER.getValue() + memberId.toString();
+		String followingKey = FOLLOWING.getValue() + memberId.toString();
 
 		FollowDto followerDto = getFollowDto(followerKey);
 		FollowDto followingDto = getFollowDto(followingKey);
@@ -64,8 +63,8 @@ public class FollowService {
 	 * follower:toId : Set<memberId>, updatedAt
 	 */
 	public void updateFollow(Long fromId, Long toId, boolean isCreate) {
-		String followingKey = FOLLOWING + fromId.toString();
-		String followerKey = FOLLOWER + toId.toString();
+		String followingKey = FOLLOWING.getValue() + fromId.toString();
+		String followerKey = FOLLOWER.getValue() + toId.toString();
 
 		FollowDto followingDto = getFollowDto(followingKey);
 		FollowDto followerDto = getFollowDto(followerKey);
@@ -111,13 +110,6 @@ public class FollowService {
 	// ZSet에 팔로우 업데이트 정보를 추가하는 메서드 -> 단방향만 저장
 	private void updateFollowUpdatesZSet(Long fromId, LocalDateTime updatedAt) {
 		double score = updatedAt.toEpochSecond(ZoneOffset.UTC);
-		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET, fromId.toString(), score);
-	}
-
-	// batch & scheduler: redis to mysql
-	public void synchronizeFollows() {
-		// Redis 데이터를 MySQL에 동기화하는 로직 구현
-
-		// todo: 모든 팔로우 삭제되있다면 batch에 반영 후, redis에서 해당 key,value 완전 제거하기
+		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET.getValue(), fromId.toString(), score);
 	}
 }
