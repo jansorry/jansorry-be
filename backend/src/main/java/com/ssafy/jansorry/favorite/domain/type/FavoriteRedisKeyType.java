@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum RedisKeyType {
-	FAVORITE_UPDATES_ZSET("favorite:updates");
+public enum FavoriteRedisKeyType {
+	FAVORITE_UPDATES_ZSET("favorite:updates"),
+	FAVORITE_RANKED_ZSET("favorite:top10");
 
 	private final String value;
 }
