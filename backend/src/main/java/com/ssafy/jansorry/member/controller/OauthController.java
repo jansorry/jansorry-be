@@ -1,8 +1,5 @@
 package com.ssafy.jansorry.member.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
