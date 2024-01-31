@@ -11,6 +11,7 @@ public record FeedInfoResponse(
 	String action,
 	Long categoryId,
 	String categoryTitle,
+	Long favoriteSize,
 	String createdAt
 ) {
 }
