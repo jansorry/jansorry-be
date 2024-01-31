@@ -62,4 +62,15 @@ public class FeedController {
 	) {
 		return ResponseEntity.ok(feedService.readFollowingFeeds(member.getId(), lastActionId, pageable));
 	}
+
+	// 트렌드 피드 조회
+	@Operation(
+		summary = "트렌드 피드 조회",
+		description = "피드를 좋아요 및 최신 순으로 조회한다. (무한스크롤)")
+	@GetMapping("/trending")
+	public ResponseEntity<Slice<FeedInfoResponse>> getTrendingFeeds(
+		Pageable pageable
+	) {
+		return ResponseEntity.ok(feedService.readTrendingFeeds(pageable));
+	}
 }
