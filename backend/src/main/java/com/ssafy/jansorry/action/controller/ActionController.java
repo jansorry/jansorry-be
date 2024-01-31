@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.action.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
 import com.ssafy.jansorry.action.dto.MainPageDto;
+import com.ssafy.jansorry.action.dto.NagStatisticDto;
 import com.ssafy.jansorry.action.service.ActionService;
 import com.ssafy.jansorry.member.domain.Member;
 
@@ -40,6 +43,16 @@ public class ActionController {
 		Pageable pageable
 	) {
 		return ResponseEntity.ok(actionService.readAllActions(lastActionId, member.getId(), pageable));
+	}
+
+	@Operation(
+		summary = "전체 대응에 대한 잔소리 가격 및 통계 확인",
+		description = "본인이 작성한 잔소리 카드의 모든 대응에 대한 가격 및 통계를 확인한다.")
+	@GetMapping("/nags/statistic")
+	private ResponseEntity<List<NagStatisticDto>> getAllNagStatistic(
+		@AuthenticationPrincipal Member member
+	) {
+		return ResponseEntity.ok(actionService.readAllNagStatistic(member.getId()));
 	}
 
 	@Operation(

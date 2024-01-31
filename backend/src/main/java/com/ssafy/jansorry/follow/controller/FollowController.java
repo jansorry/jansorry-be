@@ -1,5 +1,8 @@
 package com.ssafy.jansorry.follow.controller;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.jansorry.follow.service.FollowBatchService;
 import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Member;
 
@@ -22,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/follows")
 public class FollowController {
 	private final FollowService followService;
+	private final FollowBatchService followBatchService;
 
 	@Operation(
 		summary = "팔로우 여부 확인",
@@ -52,6 +57,19 @@ public class FollowController {
 		@AuthenticationPrincipal Member member,
 		@PathVariable Long toId) {
 		followService.updateFollow(member.getId(), toId, false);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/sync")
+	private ResponseEntity<Void> sync() {
+		Set<String> updatedActionIds = followBatchService.synchronizeUpdatedData(LocalDateTime.now().minusHours(1));
+		followBatchService.deleteEmptySet(updatedActionIds);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/delete")
+	private ResponseEntity<Void> deleteEmptySet() {
+		followBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
 	}
 }
