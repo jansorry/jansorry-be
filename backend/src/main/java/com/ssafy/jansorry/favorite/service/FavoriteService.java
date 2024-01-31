@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.favorite.service;
 
-import static com.ssafy.jansorry.favorite.domain.type.RedisKeyType.*;
+import static com.ssafy.jansorry.favorite.domain.type.FavoriteRedisKeyType.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -85,7 +85,7 @@ public class FavoriteService {
 	}
 
 	// 업데이트 된 좋아요에 대한 개수를 반환하는 메서드
-	private long getUpdateFavoriteCount(Long actionId) {
+	public long getUpdateFavoriteCount(Long actionId) {
 		String key = actionId.toString();
 		FavoriteDto favoriteDto = getFavoriteDto(key);
 

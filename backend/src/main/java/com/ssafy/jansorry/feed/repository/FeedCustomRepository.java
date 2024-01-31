@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.feed.repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
@@ -14,7 +16,7 @@ public interface FeedCustomRepository {
 
 	Slice<FeedInfoResponse> searchFeedsByFollow(Set<Long> memberIdSet, Long lastActionId, Pageable pageable);
 
-	Slice<FeedInfoResponse> searchFeedsByFavorites(Set<String> keys, Set<Long> longKeys,
+	Slice<FeedInfoResponse> searchFeedsByFavorites(List<Long> keys, Map<Long, Long> favoriteCnt,
 		Pageable pageable);
 
 }
