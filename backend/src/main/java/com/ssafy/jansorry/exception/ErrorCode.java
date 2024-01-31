@@ -32,6 +32,11 @@ public enum ErrorCode {
 	// redis
 	ATTEMPTS_OVERFLOW(500, "팔로우 업데이트 실패: 최대 재시도 횟수 도달"),
 
+	// batch
+	BATCH_FAILED(500, "배치작업이 실패했습니다."),
+	FOLLOW_SYNC_FAILED(500, "배치작업이 실패했습니다."),
+	FAVORITE_SYNC_FAILED(500, "배치작업이 실패했습니다."),
+
 	// ===========================================================================
 	// 4xx: Client Errors
 	NOT_FOUND(404, "Not Found"), METHOD_NOT_ALLOWED(405, "Method Not Allowed"), CONFLICT(409, "Conflict"),
