@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.favorite.service;
 
-import static com.ssafy.jansorry.favorite.service.FavoriteService.*;
+import static com.ssafy.jansorry.favorite.domain.type.RedisKeyType.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,7 +35,7 @@ public class FavoriteBatchService {
 	public Set<String> synchronizeUpdatedData(LocalDateTime prevBatchTime) {
 		// 1-1. zset에 업데이트된 actionId set 가져오기
 		Set<String> updatedActionIds = favoriteZSetRedisTemplate.opsForZSet().rangeByScore(
-				FAVORITE_UPDATES_ZSET,
+				FAVORITE_UPDATES_ZSET.getValue(),
 				prevBatchTime.toEpochSecond(ZoneOffset.UTC),
 				Double.POSITIVE_INFINITY
 			).stream()
@@ -72,6 +72,6 @@ public class FavoriteBatchService {
 
 	// 3. 배치 작업 후 ZSet에서 모든 항목을 정리
 	public void refreshZSetAfterBatch() {
-		favoriteRedisTemplate.delete(FAVORITE_UPDATES_ZSET);// ZSet 전체를 삭제
+		favoriteRedisTemplate.delete(FAVORITE_UPDATES_ZSET.getValue());// ZSet 전체를 삭제
 	}
 }
