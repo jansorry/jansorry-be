@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 public class FavoriteController {
 	private final FavoriteService favoriteService;
-	private final FavoriteBatchService favoriteBatchService;
 
 	@Operation(
 		summary = "좋아요 정보 확인",
@@ -61,19 +60,6 @@ public class FavoriteController {
 		@AuthenticationPrincipal Member member
 	) {
 		favoriteService.updateFavorite(actionId, member.getId(), false);
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/favorites/sync")
-	private ResponseEntity<Void> sync() {
-		Set<String> updatedActionIds = favoriteBatchService.synchronizeUpdatedData(LocalDateTime.now().minusHours(1));
-		favoriteBatchService.deleteEmptySet(updatedActionIds);
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping("/favorites/delete")
-	private ResponseEntity<Void> deleteEmptySet() {
-		favoriteBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
 	}
 }

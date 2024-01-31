@@ -24,13 +24,6 @@ public class FavoriteBatchService {
 	private final RedisTemplate<String, Object> favoriteZSetRedisTemplate;
 	private final FavoriteCustomRepository favoriteCustomRepository;
 
-	// batch & scheduler: redis to mysql
-	public void synchronizeFavorites() {
-		// Redis 데이터를 MySQL에 동기화하는 로직 구현
-
-		// todo: 모든 좋아요가 삭제되있다면 batch에 반영 후, redis에서 해당 key,value 완전 제거하기
-	}
-
 	// 1. MySQL에 데이터 반영
 	public Set<String> synchronizeUpdatedData(LocalDateTime prevBatchTime) {
 		// 1-1. zset에 업데이트된 actionId set 가져오기
@@ -41,8 +34,6 @@ public class FavoriteBatchService {
 			).stream()
 			.map(Object::toString)
 			.collect(Collectors.toSet());
-
-		System.out.println(updatedActionIds);
 
 		// 1-2. 업데이트된 actionId set을 기반으로 redis로부터 최신 상태의 favorite dto 조회 -> 반영
 		for (String actionId : updatedActionIds) {

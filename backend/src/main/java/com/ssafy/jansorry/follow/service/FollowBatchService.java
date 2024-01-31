@@ -24,13 +24,6 @@ public class FollowBatchService {
 	private final RedisTemplate<String, Object> followZSetRedisTemplate;
 	private final FollowCustomRepository followCustomRepository;
 
-	// batch & scheduler: redis to mysql
-	public void synchronizeFollows() {
-		// Redis 데이터를 MySQL에 동기화하는 로직 구현
-
-		// todo: 모든 좋아요가 삭제되있다면 batch에 반영 후, redis에서 해당 key,value 완전 제거하기
-	}
-
 	// 1. MySQL에 데이터 반영
 	public Set<String> synchronizeUpdatedData(LocalDateTime prevBatchTime) {
 		// 1-1. zset에 업데이트된 memberId set 가져오기
