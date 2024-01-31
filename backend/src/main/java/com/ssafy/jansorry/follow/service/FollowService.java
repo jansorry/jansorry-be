@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.follow.service;
 
-import static com.ssafy.jansorry.follow.domain.type.RedisKeyType.*;
+import static com.ssafy.jansorry.follow.domain.type.FollowRedisKeyType.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

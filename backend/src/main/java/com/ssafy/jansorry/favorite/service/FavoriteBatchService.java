@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.favorite.service;
 
-import static com.ssafy.jansorry.favorite.domain.type.RedisKeyType.*;
+import static com.ssafy.jansorry.favorite.domain.type.FavoriteRedisKeyType.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

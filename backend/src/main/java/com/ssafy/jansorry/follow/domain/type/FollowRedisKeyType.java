@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum RedisKeyType {
+public enum FollowRedisKeyType {
 	FOLLOW_UPDATES_ZSET("follow:updates"),
 	FOLLOWING("following:"),
 	FOLLOWER("follower:");
