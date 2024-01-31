@@ -64,14 +64,14 @@ public class FavoriteController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/sync")
+	@PostMapping("/favorites/sync")
 	private ResponseEntity<Void> sync() {
 		Set<String> updatedActionIds = favoriteBatchService.synchronizeUpdatedData(LocalDateTime.now().minusHours(1));
 		favoriteBatchService.deleteEmptySet(updatedActionIds);
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/delete")
+	@PostMapping("/favorites/delete")
 	private ResponseEntity<Void> deleteEmptySet() {
 		favoriteBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
