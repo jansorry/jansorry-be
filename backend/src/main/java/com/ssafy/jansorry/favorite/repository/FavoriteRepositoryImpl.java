@@ -3,7 +3,6 @@ package com.ssafy.jansorry.favorite.repository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -42,18 +41,13 @@ public class FavoriteRepositoryImpl implements FavoriteCustomRepository {
 			.where(favorite.action.id.eq(actionId))
 			.fetch();
 
-		// Redis에는 있지만 MySQL에 없는 memberId를 찾아 새 Favorite 인스턴스를 생성합니다.
-		Set<Long> memberIdsToAdd = updatedMemberIds.stream()
-			.filter(id -> !existingMemberIds.contains(id))
-			.collect(Collectors.toSet());
-
-		// Action 엔티티 조회
+		// 3. Action 엔티티 조회
 		Action action = actionRepository.findById(actionId).orElse(null);
 		if (action == null) {// 해당 대응을 찾을 수 없는 경우 리턴
 			return;
 		}
 
-		// 새로운 Favorite 인스턴스 생성
+		// 4. 새로운 Favorite 인스턴스 생성
 		List<Favorite> favoritesToAdd = updatedMemberIds.stream()
 			.filter(id -> !existingMemberIds.contains(id))
 			.map(memberId -> memberRepository.findById(memberId).orElse(null))
@@ -64,7 +58,7 @@ public class FavoriteRepositoryImpl implements FavoriteCustomRepository {
 				.build())
 			.toList();
 
-		// 새로운 Favorite 인스턴스 저장
+		// 5. 새로운 Favorite 인스턴스 저장
 		favoritesToAdd.forEach(entityManager::persist);// 배치 삽입 최적화
 	}
 }
