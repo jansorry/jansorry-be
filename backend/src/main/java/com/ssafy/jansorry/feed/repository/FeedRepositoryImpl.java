@@ -17,6 +17,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.jansorry.action.domain.Action;
+import com.ssafy.jansorry.favorite.service.FavoriteService;
 import com.ssafy.jansorry.feed.dto.FeedDto;
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 import com.ssafy.jansorry.feed.util.FeedMapper;
@@ -27,23 +28,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FeedRepositoryImpl implements FeedCustomRepository {
 	private final JPAQueryFactory queryFactory;
+	private final FavoriteService favoriteService;
 
 	@Override
 	public Slice<FeedInfoResponse> searchFeedsByTime(Long lastActionId, Pageable pageable) {
 		List<Action> actions = queryFactory
 			.selectFrom(action)
 			.where(
-				ltActionId(lastActionId) // action.id < lastActionId
+				ltActionId(lastActionId), // action.id < lastActionId
+				action.deleted.isFalse()
 			)
 			.orderBy(action.id.desc()) // 최신순으로 보여줌
 			.limit(pageable.getPageSize() + 1) // limit보다 한 개 더 들고온다.
 			.fetch();
 
-		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
-		if (CollectionUtils.isEmpty(feedInfoResponses)) {
-			return new SliceImpl<>(feedInfoResponses, pageable, false);
-		}
-		return checkLastPage(pageable, feedInfoResponses);
+		return getFeedInfoResponses(pageable, actions);
 	}
 
 	@Override
@@ -54,17 +53,14 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			.selectFrom(action)
 			.where(
 				ltActionId(lastActionId),
-				action.member.birth.subtract(currentDate.getYear()).abs().between(age - 1, age + 8)
+				action.member.birth.subtract(currentDate.getYear()).abs().between(age - 1, age + 8),
+				action.deleted.isFalse()
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();
 
-		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
-		if (CollectionUtils.isEmpty(feedInfoResponses)) {
-			return new SliceImpl<>(feedInfoResponses, pageable, false);
-		}
-		return checkLastPage(pageable, feedInfoResponses);
+		return getFeedInfoResponses(pageable, actions);
 	}
 
 	@Override
@@ -74,13 +70,22 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			.selectFrom(action)
 			.where(
 				action.member.id.in(memberIdSet),
-				ltActionId(lastActionId)
+				ltActionId(lastActionId),
+				action.deleted.isFalse()
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
 			.fetch();
 
+		return getFeedInfoResponses(pageable, actions);
+	}
+
+	private Slice<FeedInfoResponse> getFeedInfoResponses(Pageable pageable, List<Action> actions) {
 		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
+		feedInfoResponses.forEach(feedInfoResponse -> {
+			feedInfoResponse.setFavoriteCount(favoriteService.getUpdateFavoriteCount(feedInfoResponse.getActionId()));
+		});
+
 		if (CollectionUtils.isEmpty(feedInfoResponses)) {
 			return new SliceImpl<>(feedInfoResponses, pageable, false);
 		}
@@ -88,7 +93,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 	}
 
 	@Override
-	public Slice<FeedInfoResponse> searchFeedsByFavorites(List<Long> keys, Map<Long, Long> map, Pageable pageable) {
+	public Slice<FeedInfoResponse> searchFeedsByFavorites(Map<Long, Long> map, Pageable pageable) {
 		// QueryDSL 쿼리 실행
 		List<FeedDto> feeds = queryFactory
 			.select(Projections.fields(FeedDto.class,
@@ -100,9 +105,10 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			))
 			.from(action)
 			.where(
-				action.id.in(keys)
+				action.id.in(map.keySet()),
+				action.deleted.isFalse()
 			)
-			.offset(pageable.getOffset())
+			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize())
 			.fetch();
 
