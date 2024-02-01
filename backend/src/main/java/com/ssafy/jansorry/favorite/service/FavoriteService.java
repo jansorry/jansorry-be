@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class FavoriteService {
 	private final RedisTemplate<String, Object> favoriteRedisTemplate;
 	private final RedisTemplate<String, Object> favoriteZSetRedisTemplate;
-	private final Long SIZE_LIMIT = 10L;
+	private final Long SIZE_LIMIT = 30L;
 
 	// 해당 대응의 좋아요 개수를 반환하는 메서드
 	public FavoriteInfoDto readFavoriteInfo(Long actionId, Long memberId) {
@@ -114,7 +114,7 @@ public class FavoriteService {
 		}
 	}
 
-	// 상위 10개의 좋아요 순(내림차순)에 대한 actionId 를 반환
+	// 상위 30개의 좋아요 순(내림차순)에 대한 actionId 를 반환
 	public List<Long> getTopFavoriteIdList() {
 		Set<Object> topFavorites = favoriteZSetRedisTemplate.opsForZSet()
 			.reverseRange(FAVORITE_RANKED_ZSET.getValue(), 0, SIZE_LIMIT - 1);

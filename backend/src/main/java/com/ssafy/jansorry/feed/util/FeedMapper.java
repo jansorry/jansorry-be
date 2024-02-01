@@ -43,7 +43,7 @@ public class FeedMapper {
 			.action(feedDto.getContent())
 			.categoryId(feedDto.getNag().getCategory().getId())
 			.categoryTitle(feedDto.getNag().getCategory().getGroupType().getValue())
-			.favoriteSize(feedDto.getSize())
+			.favoriteCount(feedDto.getSize())
 			.createdAt(feedDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 			.build();
 	}

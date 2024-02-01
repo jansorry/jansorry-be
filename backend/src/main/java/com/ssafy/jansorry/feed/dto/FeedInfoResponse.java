@@ -1,17 +1,20 @@
 package com.ssafy.jansorry.feed.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Builder
-public record FeedInfoResponse(
-	Long memberId,
-	Long actionId,
-	String nickname,
-	String nag,
-	String action,
-	Long categoryId,
-	String categoryTitle,
-	Long favoriteSize,
-	String createdAt
-) {
+public class FeedInfoResponse {
+	private Long memberId;
+	private Long actionId;
+	private String nickname;
+	private String nag;
+	private String action;
+	private Long categoryId;
+	private String categoryTitle;
+	private Long favoriteCount;
+	private String createdAt;
 }
