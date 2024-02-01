@@ -35,7 +35,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,
 		@RequestBody ReceiptDto receiptDto    //@RequestBody: HTTP 요청 바디 값을 컨트롤러 메서드의 매개 변수로 받을 수 있음
 	) {
-		receiptService.createReceipt(receiptDto, member.getId());
+		receiptService.createReceipt(receiptDto, member);
 		return ResponseEntity.ok().build();
 	}
 

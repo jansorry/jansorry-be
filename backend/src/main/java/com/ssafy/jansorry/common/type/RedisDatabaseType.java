@@ -8,5 +8,6 @@ import lombok.Getter;
 public enum RedisDatabaseType {
 	TOKEN_DB_IDX,
 	FOLLOW_DB_IDX,
-	FAVORITE_DB_IDX;
+	FAVORITE_DB_IDX,
+	STATISTIC_DB_IDX;
 }

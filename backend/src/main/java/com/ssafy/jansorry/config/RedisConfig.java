@@ -47,6 +47,7 @@ public class RedisConfig {
 		return lettuceConnectionFactory;
 	}
 
+	// 토큰 템플릿
 	@Bean
 	public RedisTemplate<String, Object> tokenRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -56,6 +57,7 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 팔로우 템플릿
 	@Bean
 	public RedisTemplate<String, Object> followRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -73,6 +75,7 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 좋아요 템플릿
 	@Bean
 	public RedisTemplate<String, Object> favoriteRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -90,6 +93,7 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 팔로우 zset 템플릿
 	@Bean
 	public RedisTemplate<String, Object> followZSetRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -100,12 +104,24 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 좋아요 zset 템플릿
 	@Bean
 	public RedisTemplate<String, Object> favoriteZSetRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(FAVORITE_DB_IDX.ordinal()));
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new StringRedisSerializer()); // ZSet 값에 대한 직렬화
+
+		return redisTemplate;
+	}
+
+	// 통계 템플릿
+	@Bean
+	public RedisTemplate<String, Object> statisticRedisTemplate() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(STATISTIC_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer()); // Set 값에 대한 직렬화
 
 		return redisTemplate;
 	}
