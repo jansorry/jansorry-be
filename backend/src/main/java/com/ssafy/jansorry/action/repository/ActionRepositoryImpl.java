@@ -30,7 +30,8 @@ public class ActionRepositoryImpl implements ActionCustomRepository {
 			.selectFrom(action)
 			.where(
 				ltActionId(lastActionId),
-				action.member.id.eq(memberId)
+				action.member.id.eq(memberId),
+				action.deleted.isFalse()
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
