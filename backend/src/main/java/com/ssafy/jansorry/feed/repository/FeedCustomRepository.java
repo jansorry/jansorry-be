@@ -1,6 +1,5 @@
 package com.ssafy.jansorry.feed.repository;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +15,7 @@ public interface FeedCustomRepository {
 
 	Slice<FeedInfoResponse> searchFeedsByFollow(Set<Long> memberIdSet, Long lastActionId, Pageable pageable);
 
-	Slice<FeedInfoResponse> searchFeedsByFavorites(List<Long> keys, Map<Long, Long> favoriteCnt,
+	Slice<FeedInfoResponse> searchFeedsByFavorites(Map<Long, Long> favoriteCnt,
 		Pageable pageable);
 
 }

@@ -1,8 +1,11 @@
 package com.ssafy.jansorry.feed.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -39,14 +42,21 @@ public class FeedService {
 	}
 
 	public Slice<FeedInfoResponse> readTrendingFeeds(Pageable pageable) {
-		Map<Long, Long> map = new HashMap<>();
-
+		Random rd = new Random();
+		Set<Integer> indexes = new HashSet<>();
 		List<Long> list = favoriteService.getTopFavoriteIdList();
-		for (Long id : list) {
-			Long size = favoriteService.getUpdateFavoriteCount(id);
-			map.put(id, size);
+
+		while (indexes.size() < 10 && indexes.size() < list.size()) {
+			indexes.add(rd.nextInt(list.size()));
 		}
 
-		return feedRepository.searchFeedsByFavorites(list, map, pageable);
+		Map<Long, Long> map = new HashMap<>();
+
+		for (Integer index : indexes) {
+			Long id = list.get(index);
+			map.put(id, favoriteService.getUpdateFavoriteCount(id));
+		}
+
+		return feedRepository.searchFeedsByFavorites(map, pageable);
 	}
 }
