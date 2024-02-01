@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BatchKeyNumberType {
-	MALE(0L),
-	FEMALE(1L),
+	MALE(1L),
+	FEMALE(2L),
 	TEN(10L),
 	TWENTY(20L),
 	THIRTY(30L),
