@@ -20,6 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.ssafy.jansorry.favorite.dto.FavoriteDto;
 import com.ssafy.jansorry.follow.dto.FollowDto;
+import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
 
 @Configuration
 @EnableTransactionManagement
@@ -121,8 +122,26 @@ public class RedisConfig {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(STATISTIC_DB_IDX.ordinal()));
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer()); // Set 값에 대한 직렬화
+		redisTemplate.setValueSerializer(new StringRedisSerializer()); // ZSet 값에 대한 직렬화
 
+		return redisTemplate;
+	}
+
+	// 통계 zset 템플릿 (영수증 탑 5 용도)
+	@Bean
+	public RedisTemplate<String, Object> statisticZSetRedisTemplate() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(STATISTIC_DB_IDX.ordinal()));
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		// Value 직렬화를 위한 ObjectMapper 설정
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new Jdk8Module());
+		objectMapper.registerModule(new ParameterNamesModule());
+		// Value 직렬화 설정
+		Jackson2JsonRedisSerializer<ReceiptRankDto> serializer = new Jackson2JsonRedisSerializer<>(ReceiptRankDto.class);
+		serializer.setObjectMapper(objectMapper);
+		redisTemplate.setValueSerializer(serializer);
 		return redisTemplate;
 	}
 
