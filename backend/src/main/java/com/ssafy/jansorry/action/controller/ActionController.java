@@ -71,16 +71,22 @@ public class ActionController {
 	@Operation(
 		summary = "대응 확인")
 	@GetMapping("/actions/{actionId}")
-	private ResponseEntity<ActionDto> getAction(@PathVariable Long actionId) {
-		return ResponseEntity.ok(actionService.readAction(actionId));
+	private ResponseEntity<ActionDto> getAction(
+		@PathVariable Long actionId,
+		@AuthenticationPrincipal Member member
+	) {
+		return ResponseEntity.ok(actionService.readAction(actionId, member.getId()));
 	}
 
 	@Operation(
 		summary = "대응 삭제",
 		description = "선택한 대응을 삭제한다. (soft deletion)")
 	@DeleteMapping("/actions/{actionId}")
-	private ResponseEntity<Void> removeAction(@PathVariable Long actionId) {
-		actionService.deleteAction(actionId);
+	private ResponseEntity<Void> removeAction(
+		@PathVariable Long actionId,
+		@AuthenticationPrincipal Member member
+	) {
+		actionService.deleteAction(actionId, member.getId());
 		return ResponseEntity.ok().build();
 	}
 

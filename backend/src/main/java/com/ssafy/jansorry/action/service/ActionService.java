@@ -55,24 +55,29 @@ public class ActionService {
 			.collect(Collectors.toList());
 	}
 
-
 	public void createAction(Long nagId, Member member, ActionCreationDto actionCreationDto) {
 		Nag nag = nagRepository.findNagById(nagId)
 			.orElseThrow(() -> new BaseException(NAG_NOT_FOUND));
 		actionRepository.save(toEntity(nag, member, actionCreationDto));
 	}
 
-	public ActionDto readAction(Long actionId) {
+	public ActionDto readAction(Long actionId, Long memberId) {
 		Action action = actionRepository.findActionByIdAndDeletedFalse(actionId)
 			.orElseThrow(() -> new BaseException(ACTION_NOT_FOUND));
+		if (!action.getMember().getId().equals(memberId)) {
+			throw new BaseException(FORBIDDEN);
+		}
 		return toDto(action);
 	}
 
-	public void deleteAction(Long actionId) {
+	public void deleteAction(Long actionId, Long memberId) {
 		Action action = actionRepository.findActionById(actionId)
 			.orElseThrow(() -> new BaseException(ACTION_NOT_FOUND));
 		if (action.getDeleted()) {
 			throw new BaseException(ACTION_ALREADY_DELETED);
+		}
+		if (!action.getMember().getId().equals(memberId)) {
+			throw new BaseException(FORBIDDEN);
 		}
 		action.setDeleted(true);// dirty checking
 	}
