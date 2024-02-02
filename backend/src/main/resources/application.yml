@@ -56,7 +56,9 @@ spring:
 logging:
   level:
     org:
-      springframework:
-        orm:
-          jpa: DEBUG
+#      springframework:
+#        orm:
+#          jpa: DEBUG
+    info:
+      root: debug
     com.ssafy.jansorry: DEBUG
