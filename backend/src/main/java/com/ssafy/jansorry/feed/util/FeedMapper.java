@@ -17,6 +17,7 @@ public class FeedMapper {
 			.memberId(action.getMember().getId())
 			.actionId(action.getId())
 			.nickname(action.getMember().getNickname())
+			.profileImage(action.getMember().getImageUrl())
 			.nag(action.getNag().getContent())
 			.action(action.getContent())
 			.categoryId(action.getNag().getCategory().getId())
@@ -39,11 +40,14 @@ public class FeedMapper {
 			.memberId(feedDto.getMember().getId())
 			.actionId(feedDto.getId())
 			.nickname(feedDto.getMember().getNickname())
+			.profileImage(feedDto.getMember().getImageUrl())
 			.nag(feedDto.getNag().getContent())
 			.action(feedDto.getContent())
 			.categoryId(feedDto.getNag().getCategory().getId())
 			.categoryTitle(feedDto.getNag().getCategory().getGroupType().getValue())
 			.favoriteCount(feedDto.getSize())
+			.isFollow(feedDto.getIsFollow())
+			.isFavorite(feedDto.getIsFavorite())
 			.createdAt(feedDto.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 			.build();
 	}
