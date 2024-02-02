@@ -9,13 +9,14 @@ import org.springframework.data.domain.Slice;
 import com.ssafy.jansorry.feed.dto.FeedInfoResponse;
 
 public interface FeedCustomRepository {
-	Slice<FeedInfoResponse> searchFeedsByTime(Long lastActionId, Pageable pageable);
+	Slice<FeedInfoResponse> searchFeedsByTime(Long memberId, Long lastActionId, Pageable pageable);
 
-	Slice<FeedInfoResponse> searchFeedsByAgeRange(Long lastActionId, int age, Pageable pageable);
+	Slice<FeedInfoResponse> searchFeedsByAgeRange(Long memberId, Long lastActionId, int age, Pageable pageable);
 
-	Slice<FeedInfoResponse> searchFeedsByFollow(Set<Long> memberIdSet, Long lastActionId, Pageable pageable);
+	Slice<FeedInfoResponse> searchFeedsByFollow(Long memberId, Set<Long> memberIdSet, Long lastActionId,
+		Pageable pageable);
 
-	Slice<FeedInfoResponse> searchFeedsByFavorites(Map<Long, Long> favoriteCnt,
+	Slice<FeedInfoResponse> searchFeedsByFavorites(Long memberId, Map<Long, Long> favoriteCnt,
 		Pageable pageable);
 
 }
