@@ -27,21 +27,21 @@ public class FeedService {
 	private final FollowService followService;
 	private final FavoriteService favoriteService;
 
-	public Slice<FeedInfoResponse> readLiveFeeds(Long lastActionId, Pageable pageable) {
-		return feedRepository.searchFeedsByTime(lastActionId, pageable);
+	public Slice<FeedInfoResponse> readLiveFeeds(Long memberId, Long lastActionId, Pageable pageable) {
+		return feedRepository.searchFeedsByTime(memberId, lastActionId, pageable);
 	}
 
-	public Slice<FeedInfoResponse> readGenerationFeeds(Long lastActionId, int age, Pageable pageable) {
-		return feedRepository.searchFeedsByAgeRange(lastActionId, age, pageable);
+	public Slice<FeedInfoResponse> readGenerationFeeds(Long memberId, Long lastActionId, int age, Pageable pageable) {
+		return feedRepository.searchFeedsByAgeRange(memberId, lastActionId, age, pageable);
 	}
 
 	public Slice<FeedInfoResponse> readFollowingFeeds(Long fromId, Long lastActionId, Pageable pageable) {
 		FollowDto followingDto = followService.getFollowDto(FollowRedisKeyType.FOLLOWING.getValue() + fromId);
 		return followingDto == null ? null :
-			feedRepository.searchFeedsByFollow(followingDto.getMemberIdSet(), lastActionId, pageable);
+			feedRepository.searchFeedsByFollow(fromId, followingDto.getMemberIdSet(), lastActionId, pageable);
 	}
 
-	public Slice<FeedInfoResponse> readTrendingFeeds(Pageable pageable) {
+	public Slice<FeedInfoResponse> readTrendingFeeds(Long memberId, Pageable pageable) {
 		Random rd = new Random();
 		Set<Integer> indexes = new HashSet<>();
 		List<Long> list = favoriteService.getTopFavoriteIdList();
@@ -57,6 +57,6 @@ public class FeedService {
 			map.put(id, favoriteService.getUpdateFavoriteCount(id));
 		}
 
-		return feedRepository.searchFeedsByFavorites(map, pageable);
+		return feedRepository.searchFeedsByFavorites(memberId, map, pageable);
 	}
 }
