@@ -42,7 +42,7 @@ public class BatchSchedulerConfig {
 	private final FollowBatchService followBatchService;
 	private final FavoriteBatchService favoriteBatchService;
 
-	@Scheduled(cron = "0 0 18 * * ?")// UTC 오후 6시 = KST 오전 3시
+	@Scheduled(cron = "0 0 3 * * ?")// KST 오전 3시
 	// @Scheduled(fixedRate = 60000) // 60,000밀리초 = 60초
 	public void runBatchJob() {
 		log.info("info log = {}", "=================== 동기화 작업 시작 ===================");
