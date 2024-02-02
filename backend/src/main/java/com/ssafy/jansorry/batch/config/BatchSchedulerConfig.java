@@ -28,11 +28,13 @@ import com.ssafy.jansorry.favorite.service.FavoriteBatchService;
 import com.ssafy.jansorry.follow.service.FollowBatchService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableScheduling
 @EnableBatchProcessing
 @RequiredArgsConstructor
+@Slf4j
 public class BatchSchedulerConfig {
 	private final JobLauncher jobLauncher;
 	private final JobRepository jobRepository;
@@ -40,9 +42,10 @@ public class BatchSchedulerConfig {
 	private final FollowBatchService followBatchService;
 	private final FavoriteBatchService favoriteBatchService;
 
-	@Scheduled(cron = "0 0 18 * * ?")// UTC 오후 5시 = KST 오전 3시
+	@Scheduled(cron = "0 0 18 * * ?")// UTC 오후 6시 = KST 오전 3시
 	// @Scheduled(fixedRate = 60000) // 60,000밀리초 = 60초
 	public void runBatchJob() {
+		log.info("info log = {}", "=================== 동기화 작업 시작 ===================");
 		JobParameters jobParameters = new JobParametersBuilder()
 			.addDate("date", new Date())
 			.toJobParameters();
@@ -50,12 +53,15 @@ public class BatchSchedulerConfig {
 			Job synchronizeJob = job();
 			jobLauncher.run(synchronizeJob, jobParameters);
 		} catch (Exception e) {
+			log.error("error log = {}", "exception 발생");
 			throw new BaseException(BATCH_FAILED);
 		}
+		log.info("info log = {}", "=================== 동기화 작업 종료 ===================");
 	}
 
 	@Bean
 	public Job job() {
+		log.trace("trace log = {}", "[job 시작]");
 		return new JobBuilder("synchronizeJob", jobRepository)
 			.start(synchronizeFollowStep())
 			.next(synchronizeFavoriteStep())
@@ -63,12 +69,14 @@ public class BatchSchedulerConfig {
 	}
 
 	public Step synchronizeFollowStep() {
+		log.trace("trace log = {}", "[팔로우 동기화 step 시작]");
 		return new StepBuilder("synchronizeFollowStep", jobRepository)
 			.tasklet(followTasklet(), transactionManager)
 			.build();
 	}
 
 	public Step synchronizeFavoriteStep() {
+		log.trace("trace log = {}", "[좋아요 동기화 step 시작]");
 		return new StepBuilder("synchronizeFavoriteStep", jobRepository)
 			.tasklet(favoriteTasklet(), transactionManager)
 			.build();
@@ -84,6 +92,7 @@ public class BatchSchedulerConfig {
 				followBatchService.deleteEmptySet(updatedFromIds);
 				followBatchService.refreshZSetAfterBatch();
 			} catch (Exception e) {
+				log.error("error log = {}", "팔로우 동기화 exception 발생");
 				throw new BaseException(FOLLOW_SYNC_FAILED);
 			}
 			return RepeatStatus.FINISHED;
@@ -96,10 +105,11 @@ public class BatchSchedulerConfig {
 			try {
 				Set<String> updatedActionIds = favoriteBatchService.synchronizeUpdatedData(
 					LocalDateTime.now().minusDays(1));// 이전 배치 시간 = 현재 시간 -1일
-					// LocalDateTime.now().minusSeconds(60));// 60초 테스트
+				// LocalDateTime.now().minusSeconds(60));// 60초 테스트
 				favoriteBatchService.deleteEmptySet(updatedActionIds);
 				favoriteBatchService.refreshZSetAfterBatch();
 			} catch (Exception e) {
+				log.error("error log = {}", "좋아요 동기화 exception 발생");
 				throw new BaseException(FAVORITE_SYNC_FAILED);
 			}
 			return RepeatStatus.FINISHED;

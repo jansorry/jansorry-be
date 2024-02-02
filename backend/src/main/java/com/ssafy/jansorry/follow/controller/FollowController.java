@@ -1,8 +1,5 @@
 package com.ssafy.jansorry.follow.controller;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.jansorry.follow.service.FollowBatchService;
 import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Member;
 
