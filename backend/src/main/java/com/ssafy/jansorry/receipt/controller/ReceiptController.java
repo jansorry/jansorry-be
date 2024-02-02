@@ -34,12 +34,12 @@ public class ReceiptController {
 		summary = "영수증 저장",
 		description = "영수증이 2개 이하라면, 해당 영수증을 저장한다.")
 	@PostMapping
-	public ResponseEntity<Void> addReceipt(    //ResponseEntity: 결과 데이터와 HTTP 상태 코드를 직접 제어할 수 있는 클래스
+	public ResponseEntity<Long> addReceipt(    //ResponseEntity: 결과 데이터와 HTTP 상태 코드를 직접 제어할 수 있는 클래스
 		@AuthenticationPrincipal Member member,
 		@RequestBody ReceiptDto receiptDto    //@RequestBody: HTTP 요청 바디 값을 컨트롤러 메서드의 매개 변수로 받을 수 있음
 	) {
-		receiptService.createReceipt(receiptDto, member);
-		return ResponseEntity.ok().build();
+
+		return ResponseEntity.ok(receiptService.createReceipt(receiptDto, member));
 	}
 
 	// 영수증 개수 확인 API - 영수증 개수를 0~3까지 반환
@@ -62,7 +62,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,    //로그인 세션 정보
 		@PathVariable("seq") Long seq
 	) {
-		ReceiptDto receiptDto = receiptService.readReceipt(member, seq);
+		ReceiptDto receiptDto = receiptService.readReceipt(member, seq - 1);
 		return ResponseEntity.ok(receiptDto);
 	}
 
@@ -75,7 +75,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,
 		@PathVariable("seq") Long seq
 	) {
-		receiptService.deleteReceipt(member, seq);
+		receiptService.deleteReceipt(member, seq - 1);
 		return ResponseEntity.ok().build();
 	}
 
