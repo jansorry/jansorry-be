@@ -1,4 +1,4 @@
-package com.ssafy.jansorry.config;
+package com.ssafy.jansorry.batch.config;
 
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 
