@@ -34,7 +34,7 @@ public class ReceiptService {
 
 	//Dto는 Service <-> Controller
 	//Entity는 Repository <-> Service
-	public void createReceipt(ReceiptDto receiptDto, Member member) {
+	public Long createReceipt(ReceiptDto receiptDto, Member member) {
 		int receiptCount = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member).size();
 
 		if (receiptCount >= 3) {
@@ -44,6 +44,7 @@ public class ReceiptService {
 		updateTopReceiptPrice(member.getNickname(), receiptDto.totalPrice());// 가격 고점 갱신 (top 5)
 
 		receiptRepository.save(toEntity(receiptDto, member));// 생성
+		return receiptCount + 1L;// 기존 개수 + 1 = next seq
 	}
 
 	public ReceiptDto readReceipt(Member member, Long seq) {
@@ -71,7 +72,6 @@ public class ReceiptService {
 
 	public Long readReceiptCount(Member member) {
 		int receiptCount = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member).size();
-		System.out.println(receiptCount);
 		return (long)receiptCount;
 	}
 
