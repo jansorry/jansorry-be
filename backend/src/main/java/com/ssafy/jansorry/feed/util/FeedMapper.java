@@ -1,5 +1,6 @@
 package com.ssafy.jansorry.feed.util;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,9 @@ public class FeedMapper {
 			.action(action.getContent())
 			.categoryId(action.getNag().getCategory().getId())
 			.categoryTitle(action.getNag().getCategory().getGroupType().getValue())
-			.createdAt(action.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+			.createdAt(action.getCreatedAt()
+				.atZone(ZoneId.of("Asia/Seoul"))
+				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 			.build();
 	}
 
