@@ -1,5 +1,7 @@
 package com.ssafy.jansorry.receipt.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.receipt.dto.ReceiptDto;
+import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
 import com.ssafy.jansorry.receipt.service.ReceiptService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +38,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,
 		@RequestBody ReceiptDto receiptDto    //@RequestBody: HTTP 요청 바디 값을 컨트롤러 메서드의 매개 변수로 받을 수 있음
 	) {
-		receiptService.createReceipt(receiptDto, member.getId());
+		receiptService.createReceipt(receiptDto, member);
 		return ResponseEntity.ok().build();
 	}
 
@@ -47,8 +50,7 @@ public class ReceiptController {
 	public ResponseEntity<Long> getReceiptCount(
 		@AuthenticationPrincipal Member member    //로그인 세션 정보
 	) {
-		Long receiptCount = receiptService.readReceiptCount(member.getId());
-		return ResponseEntity.ok(receiptCount);
+		return ResponseEntity.ok(receiptService.readReceiptCount(member));
 	}
 
 	//영수증 조회하는 API - 3개중 {seq}번째의 영수증을 반환한다.
@@ -60,7 +62,7 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,    //로그인 세션 정보
 		@PathVariable("seq") Long seq
 	) {
-		ReceiptDto receiptDto = receiptService.readReceipt(member.getId(), seq);
+		ReceiptDto receiptDto = receiptService.readReceipt(member, seq);
 		return ResponseEntity.ok(receiptDto);
 	}
 
@@ -73,7 +75,12 @@ public class ReceiptController {
 		@AuthenticationPrincipal Member member,
 		@PathVariable("seq") Long seq
 	) {
-		receiptService.deleteReceipt(member.getId(), seq);
+		receiptService.deleteReceipt(member, seq);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/rank")
+	public ResponseEntity<List<ReceiptRankDto>> getRanks() {
+		return ResponseEntity.ok(receiptService.getTopReceiptsList());
 	}
 }

@@ -35,5 +35,7 @@ public class Receipt extends BaseEntity {
 	@NonNull
 	private String friendUrl;
 	@NonNull
+	private Long totalPrice;
+	@NonNull
 	private Boolean deleted;
 }

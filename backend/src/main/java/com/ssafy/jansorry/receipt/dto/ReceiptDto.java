@@ -8,5 +8,6 @@ public record ReceiptDto (
 	String description,
 	String message,
 	String familyUrl,
-	String friendUrl) {
+	String friendUrl,
+	Long totalPrice) {
 }
