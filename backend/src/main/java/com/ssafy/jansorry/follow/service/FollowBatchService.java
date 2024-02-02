@@ -50,12 +50,12 @@ public class FollowBatchService {
 	}
 
 	// 2. redis 에서 empty set row 삭제
-	public void deleteEmptySet(Set<String> updatedKeys) {
+	public void deleteEmptySet(Set<String> updatedKeys) {// todo: 접두사 추가
 		updatedKeys.forEach(key -> {
-			// Fetch the FollowDto object from Redis
-			FollowDto followDto = (FollowDto)followRedisTemplate.opsForValue().get(key);
+			// Fetch the FollowingDto object from Redis
+			FollowDto followingDto = (FollowDto)followRedisTemplate.opsForValue().get(FOLLOWING.getValue() + key);
 
-			if (followDto == null || followDto.getMemberIdSet().isEmpty()) {// delete the key from Redis
+			if (followingDto == null || followingDto.getMemberIdSet().isEmpty()) {// delete the key from Redis
 				followRedisTemplate.delete(key);
 			}
 		});
