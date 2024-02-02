@@ -28,6 +28,9 @@ public class FollowService {
 	public Boolean readFollowCheck(Long fromId, Long toId) {
 		String followerKey = FOLLOWER.getValue() + toId.toString();
 		FollowDto followerDto = getFollowDto(followerKey);
+		if (followerDto == null) {
+			return false;
+		}
 		return followerDto.getMemberIdSet().contains(fromId);
 	}
 
