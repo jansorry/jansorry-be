@@ -21,6 +21,8 @@ public class FeedDto {
 	private Member member;
 	private Nag nag;
 	private String content;
+	private Long size;
+	private Boolean isFollow;
+	private Boolean isFavorite;
 	private LocalDateTime createdAt;
-	private long size;
 }
