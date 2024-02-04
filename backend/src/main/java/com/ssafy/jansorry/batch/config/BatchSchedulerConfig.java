@@ -10,7 +10,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
@@ -32,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableScheduling
-@EnableBatchProcessing
 @RequiredArgsConstructor
 @Slf4j
 public class BatchSchedulerConfig {
@@ -53,7 +51,7 @@ public class BatchSchedulerConfig {
 			Job synchronizeJob = job();
 			jobLauncher.run(synchronizeJob, jobParameters);
 		} catch (Exception e) {
-			log.error("error log = {}", "exception 발생");
+			log.error("error log = {}", e.getMessage());
 			throw new BaseException(BATCH_FAILED);
 		}
 		log.info("info log = {}", "=================== 동기화 작업 종료 ===================");
@@ -92,7 +90,7 @@ public class BatchSchedulerConfig {
 				followBatchService.deleteEmptySet(updatedFromIds);
 				followBatchService.refreshZSetAfterBatch();
 			} catch (Exception e) {
-				log.error("error log = {}", "팔로우 동기화 exception 발생");
+				log.error("팔로우 동기화 오류 발생 = {}", e.getMessage());
 				throw new BaseException(FOLLOW_SYNC_FAILED);
 			}
 			return RepeatStatus.FINISHED;
@@ -105,11 +103,11 @@ public class BatchSchedulerConfig {
 			try {
 				Set<String> updatedActionIds = favoriteBatchService.synchronizeUpdatedData(
 					LocalDateTime.now().minusDays(1));// 이전 배치 시간 = 현재 시간 -1일
-				// LocalDateTime.now().minusSeconds(60));// 60초 테스트
+					// LocalDateTime.now().minusSeconds(60));// 60초 테스트
 				favoriteBatchService.deleteEmptySet(updatedActionIds);
 				favoriteBatchService.refreshZSetAfterBatch();
 			} catch (Exception e) {
-				log.error("error log = {}", "좋아요 동기화 exception 발생");
+				log.error("좋아요 동기화 오류 발생 = {}", e.getMessage());
 				throw new BaseException(FAVORITE_SYNC_FAILED);
 			}
 			return RepeatStatus.FINISHED;

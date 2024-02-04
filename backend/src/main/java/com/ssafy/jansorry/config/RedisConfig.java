@@ -117,13 +117,24 @@ public class RedisConfig {
 	}
 
 	// 통계 템플릿
+
 	@Bean
 	public RedisTemplate<String, Object> statisticRedisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(createLettuceConnectionFactory(STATISTIC_DB_IDX.ordinal()));
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer()); // ZSet 값에 대한 직렬화
 
+		// ObjectMapper 설정
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new Jdk8Module());
+		objectMapper.registerModule(new ParameterNamesModule());
+
+		// Object 타입의 데이터를 처리할 수 있는 Serializer 설정
+		Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+		serializer.setObjectMapper(objectMapper);
+
+		redisTemplate.setValueSerializer(serializer);
 		return redisTemplate;
 	}
 
@@ -139,7 +150,8 @@ public class RedisConfig {
 		objectMapper.registerModule(new Jdk8Module());
 		objectMapper.registerModule(new ParameterNamesModule());
 		// Value 직렬화 설정
-		Jackson2JsonRedisSerializer<ReceiptRankDto> serializer = new Jackson2JsonRedisSerializer<>(ReceiptRankDto.class);
+		Jackson2JsonRedisSerializer<ReceiptRankDto> serializer = new Jackson2JsonRedisSerializer<>(
+			ReceiptRankDto.class);
 		serializer.setObjectMapper(objectMapper);
 		redisTemplate.setValueSerializer(serializer);
 		return redisTemplate;
