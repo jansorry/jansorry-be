@@ -97,7 +97,8 @@ public class FollowService {
 		}
 		updateFollowDto(followingKey, followingDto); // 팔로잉 업데이트
 		updateFollowDto(followerKey, followerDto); // 팔로워 업데이트 (양방향 업데이트)
-		updateFollowUpdatesZSet(fromId, followingDto.getUpdatedAt());// ZSet에 업데이트 정보 추가
+		updateFollowUpdatesZSet(followingKey, followingDto.getUpdatedAt());// ZSet에 팔로잉 업데이트 정보 추가
+		updateFollowUpdatesZSet(followerKey, followingDto.getUpdatedAt());// ZSet에 팔로워 업데이트 정보 추가
 	}
 
 	// redis 로부터 해당 FollowDto 를 반환하는 메서드
@@ -110,9 +111,9 @@ public class FollowService {
 		followRedisTemplate.opsForValue().set(key, updatedFollowDto);
 	}
 
-	// ZSet에 팔로우 업데이트 정보를 추가하는 메서드 -> 단방향만 저장
-	private void updateFollowUpdatesZSet(Long fromId, LocalDateTime updatedAt) {
+	// ZSet에 팔로우 업데이트 정보를 추가하는 메서드 -> 양방향 모두 저장
+	private void updateFollowUpdatesZSet(String key, LocalDateTime updatedAt) {
 		double score = updatedAt.toEpochSecond(ZoneOffset.UTC);
-		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET.getValue(), fromId.toString(), score);
+		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET.getValue(), key, score);
 	}
 }

@@ -27,7 +27,7 @@ public class FollowBatchService {
 	// 1. MySQL에 데이터 반영
 	public Set<String> synchronizeUpdatedData(LocalDateTime prevBatchTime) {
 		// 1-1. zset에 업데이트된 memberId set 가져오기
-		Set<String> updatedFromIds = followZSetRedisTemplate.opsForZSet().rangeByScore(
+		Set<String> updatedKeys = followZSetRedisTemplate.opsForZSet().rangeByScore(
 				FOLLOW_UPDATES_ZSET.getValue(),
 				prevBatchTime.toEpochSecond(ZoneOffset.UTC),
 				Double.POSITIVE_INFINITY
@@ -36,33 +36,36 @@ public class FollowBatchService {
 			.collect(Collectors.toSet());
 
 		// 1-2. 업데이트된 fromId set을 기반으로 redis로부터 최신 상태의 follow dto 조회 -> 반영
-		for (String fromId : updatedFromIds) {
-			FollowDto followDto = (FollowDto)followRedisTemplate.opsForValue().get(FOLLOWING.getValue() + fromId);
-			if (followDto != null) {
-				Set<Long> updatedMemberIds = followDto.getMemberIdSet();
+		for (String key : updatedKeys) {
+			if (key.contains(FOLLOWER.getValue())) {// 팔로워 관련 zset value일 경우 스킵
+				continue;
+			}
+			// 팔로잉 관련 zset value일 경우
+			FollowDto followingDto = (FollowDto)followRedisTemplate.opsForValue().get(key);// from id (following:~)
+			if (followingDto != null) {// 지워지지 않았다면
+				Set<Long> updatedMemberIds = followingDto.getMemberIdSet();
 
-				// MySQL 데이터베이스 업데이트 로직
-				followCustomRepository.updateFollowsByFromId(Long.parseLong(fromId), updatedMemberIds);
+				// MySQL로 데이터 업데이트
+				followCustomRepository.updateFollowsByFromId(Long.parseLong(key.replace(FOLLOWING.getValue(), "")), updatedMemberIds);// 접두사 제거 후 진행
 			}
 		}
 
-		return updatedFromIds;
+		return updatedKeys;
 	}
 
 	// 2. redis 에서 empty set row 삭제
-	public void deleteEmptySet(Set<String> updatedKeys) {
+	public void deleteEmptySet(Set<String> updatedKeys) {// 팔로잉 및 팔로워 접두사 포함으로 이루어진 set
 		updatedKeys.forEach(key -> {
 			// Fetch the FollowDto object from Redis
-			FollowDto followDto = (FollowDto)followRedisTemplate.opsForValue().get(key);
-
-			if (followDto == null || followDto.getMemberIdSet().isEmpty()) {// delete the key from Redis
-				followRedisTemplate.delete(key);
+			FollowDto followDto = (FollowDto)followRedisTemplate.opsForValue().get(key);// following + follower 전체 업데이트 관련 키셋
+			if (followDto == null || followDto.getMemberIdSet().isEmpty()) {// null이거나 비어있다면
+				followRedisTemplate.delete(key);// 삭제
 			}
 		});
 	}
 
 	// 3. 배치 작업 후 ZSet에서 모든 항목을 정리
 	public void refreshZSetAfterBatch() {
-		followRedisTemplate.delete(FOLLOW_UPDATES_ZSET.getValue());// ZSet 전체를 삭제
+		followRedisTemplate.delete(FOLLOW_UPDATES_ZSET.getValue());// ZSet 반영 완료 후 비우기 작업
 	}
 }
