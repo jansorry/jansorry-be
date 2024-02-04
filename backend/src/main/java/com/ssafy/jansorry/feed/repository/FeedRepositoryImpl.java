@@ -89,7 +89,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 		FavoriteInfoDto favoriteInfoDto;
 		for (FeedInfoResponse feedInfoResponse : feedInfoResponses) {
 			favoriteInfoDto = favoriteService.readFavoriteInfo(feedInfoResponse.getActionId(),
-				feedInfoResponse.getMemberId());
+				memberId);
 			feedInfoResponse.setFavoriteCount(favoriteInfoDto.favoriteCount());
 			feedInfoResponse.setIsFavorite(favoriteInfoDto.checked());
 
