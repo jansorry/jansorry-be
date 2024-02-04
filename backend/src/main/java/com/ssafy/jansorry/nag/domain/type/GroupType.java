@@ -16,4 +16,13 @@ public enum GroupType {
 
 	private final String value;
 	private final Long idx;
+
+	public static String getSpecificGroupName(Long idx) {
+		for (GroupType type : GroupType.values()) {
+			if (type.getIdx().equals(idx)) {
+				return type.getValue();
+			}
+		}
+		return null;
+	}
 }
