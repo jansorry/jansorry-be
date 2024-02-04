@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.jansorry.batch.repository.BatchCustomRepository;
 import com.ssafy.jansorry.batch.type.BatchKeyNumberType;
 import com.ssafy.jansorry.batch.util.BatchMapper;
-import com.ssafy.jansorry.favorite.service.FavoriteService;
 import com.ssafy.jansorry.nag.domain.type.GroupType;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class BatchService {
 	private final RedisTemplate<String, Object> statisticRedisTemplate;
 	private final BatchCustomRepository batchCustomRepository;
-	private final FavoriteService favoriteService;
 
 	public void updateTop5NagsByGender() {
 		List<Long> nagsIndexes = null;
@@ -38,7 +36,7 @@ public class BatchService {
 	public void updateTop5NagsByAgeRange() {
 		List<Long> nagsIndexes = null;
 		String key = "";
-		for (int i = 2; i < 5; i += 10) { // 성별
+		for (int i = 2; i < 5; i++) { // 나이
 			for (int j = 1; j <= 7; j++) { // categoryId
 				nagsIndexes = batchCustomRepository.searchTop5NagsByAgeRange((long)j,
 					BatchKeyNumberType.values()[i]);
@@ -53,7 +51,7 @@ public class BatchService {
 		String key = "";
 		for (int i = 1; i <= 7; i++) { // categoryId
 			nagsIndexes = batchCustomRepository.searchTop5NagsByAll((long)i);
-			key = BatchMapper.getNagStatisticKey(BatchKeyNumberType.values()[6], GroupType.values()[i - 1]);
+			key = BatchMapper.getNagStatisticKey(BatchKeyNumberType.values()[5], GroupType.values()[i - 1]);
 			statisticRedisTemplate.opsForValue().set(key, nagsIndexes);
 		}
 	}
