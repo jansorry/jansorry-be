@@ -34,8 +34,10 @@ public enum ErrorCode {
 
 	// batch
 	BATCH_FAILED(500, "배치작업이 실패했습니다."),
-	FOLLOW_SYNC_FAILED(500, "배치작업이 실패했습니다."),
-	FAVORITE_SYNC_FAILED(500, "배치작업이 실패했습니다."),
+	FOLLOW_SYNC_FAILED(500, "팔로우 동기화 작업이 실패했습니다."),
+	FAVORITE_SYNC_FAILED(500, "좋아요 동기화 작업이 실패했습니다."),
+	DATA_GATHERING_FAILED(500, "최종 데이터 정리 작업이 실패했습니다."),
+	DATA_BINDING_FAILED(500, "최종 데이터 반영 작업이 실패했습니다."),
 
 	// ===========================================================================
 	// 4xx: Client Errors
