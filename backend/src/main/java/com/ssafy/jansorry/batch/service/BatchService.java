@@ -104,36 +104,37 @@ public class BatchService {
 
 	private void processKey(String key) {
 		System.out.println("key = " + key);
-		List<Object> resultSet = (List<Object>)statisticRedisTemplate.opsForValue().get(key);
+		List<Long> resultSet = (List<Long>)statisticRedisTemplate.opsForValue().get(key);
 		if (resultSet == null || resultSet.isEmpty()) {
 			return;
 		}
 
 		if (key.equals(TOP_FAVORITE.getValue())) {
-			List<Long> ids = resultSet.stream()
-				.filter(obj -> obj instanceof String)
-				.map(obj -> Long.parseLong((String)obj))
-				.collect(Collectors.toList());
-			System.out.println("ids = " + ids);
-			processTopFavorite(ids);
+			System.out.println("ids = " + resultSet);
+			processTopFavorite(resultSet);
 		} else if (key.equals(TOP_RECEIPT.getValue())) {
 			processTopReceipt();
 		} else {
-			List<Long> ids = resultSet.stream()
-				.filter(obj -> obj instanceof String)
-				.map(obj -> Long.parseLong((String)obj))
-				.collect(Collectors.toList());
-			System.out.println("ids = " + ids);
-			processNags(key, ids);
+			System.out.println("ids = " + resultSet);
+			processNags(key, resultSet);
 		}
 	}
 
 	private void processTopFavorite(List<Long> actionIds) {
-		List<String> actions = actionIds.stream()
-			.map(actionId -> actionRepository.findActionById(actionId)
-				.orElseThrow(() -> new BaseException(ACTION_NOT_FOUND))
-				.getContent())
-			.collect(Collectors.toList());
+		List<String> actions = new ArrayList<>();
+		for (Object obj : actionIds) {
+			Long actionId;
+			if (obj instanceof Integer) {
+				actionId = ((Integer) obj).longValue(); // Integer를 Long으로 변환
+			} else if (obj instanceof Long) {
+				actionId = (Long) obj; // 이미 Long이면 그대로 사용
+			} else {
+				throw new IllegalArgumentException("Unsupported object type");
+			}
+			actions.add(nagRepository.findNagById(actionId)
+				.orElseThrow(() -> new BaseException(NAG_NOT_FOUND))
+				.getContent());
+		}
 		batchRepository.save(BatchEntity.builder()
 			.finalKey("대응:좋아요순")
 			.finalValues(actions)
@@ -149,16 +150,26 @@ public class BatchService {
 	}
 
 	private void processNags(String key, List<Long> nagIds) {
-		List<String> nags = nagIds.stream()
-			.map(nagId -> nagRepository.findNagById(nagId)
+		List<String> nags = new ArrayList<>();
+		for (Object obj : nagIds) {
+			Long nagId;
+			if (obj instanceof Integer) {
+				nagId = ((Integer) obj).longValue(); // Integer를 Long으로 변환
+			} else if (obj instanceof Long) {
+				nagId = (Long) obj; // 이미 Long이면 그대로 사용
+			} else {
+				throw new IllegalArgumentException("Unsupported object type");
+			}
+			nags.add(nagRepository.findNagById(nagId)
 				.orElseThrow(() -> new BaseException(NAG_NOT_FOUND))
-				.getContent())
-			.collect(Collectors.toList());
+				.getContent());
+		}
 		batchRepository.save(BatchEntity.builder()
 			.finalKey(decodeNagStatisticKey(key))
 			.finalValues(nags)
 			.build());
 	}
+
 
 	public List<FinalDataDto> readAllFinalData() {
 		return batchRepository.findAll().stream()
