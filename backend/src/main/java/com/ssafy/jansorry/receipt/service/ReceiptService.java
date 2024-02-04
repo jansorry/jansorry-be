@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.receipt.domain.Receipt;
@@ -29,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptService {
 	private final ReceiptRepository receiptRepository;
 	private final RedisTemplate<String, Object> statisticZSetRedisTemplate;
-	private final ObjectMapper objectMapper;
 	private final Long SIZE_LIMIT = 5L;
 
 	//Dto는 Service <-> Controller

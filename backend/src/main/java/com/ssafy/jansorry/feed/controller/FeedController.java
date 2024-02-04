@@ -68,7 +68,7 @@ public class FeedController {
 	// 트렌드 피드 조회
 	@Operation(
 		summary = "트렌드 피드 조회",
-		description = "피드를 좋아요 및 최신 순으로 조회한다. (무한스크롤)")
+		description = "피드를 좋아요 및 최신 순으로 10개 조회한다. (무한스크롤)")
 	@GetMapping("/trending")
 	public ResponseEntity<Slice<FeedInfoResponse>> getTrendingFeeds(
 		@AuthenticationPrincipal Member member,

@@ -86,19 +86,20 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 
 	private Slice<FeedInfoResponse> getFeedInfoResponses(Long memberId, Pageable pageable, List<Action> actions) {
 		List<FeedInfoResponse> feedInfoResponses = FeedMapper.fromActions(actions);
-		feedInfoResponses.forEach(feedInfoResponse -> {
-			FavoriteInfoDto favoriteInfoDto = favoriteService.readFavoriteInfo(feedInfoResponse.getActionId(),
+		FavoriteInfoDto favoriteInfoDto;
+		for (FeedInfoResponse feedInfoResponse : feedInfoResponses) {
+			favoriteInfoDto = favoriteService.readFavoriteInfo(feedInfoResponse.getActionId(),
 				feedInfoResponse.getMemberId());
 			feedInfoResponse.setFavoriteCount(favoriteInfoDto.favoriteCount());
 			feedInfoResponse.setIsFavorite(favoriteInfoDto.checked());
-			
+
 			if (Objects.equals(memberId, feedInfoResponse.getMemberId())) {
 				feedInfoResponse.setIsFollow(null);
 			} else {
 				feedInfoResponse.setIsFollow(
 					followService.readFollowCheck(memberId, feedInfoResponse.getMemberId()));
 			}
-		});
+		}
 
 		if (CollectionUtils.isEmpty(feedInfoResponses)) {
 			return new SliceImpl<>(feedInfoResponses, pageable, false);
@@ -114,7 +115,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 				action.id.as("id"),
 				action.member,
 				action.nag,
-				action.nag.content.as("content"),
+				action.content,
 				action.createdAt
 			))
 			.from(action)
@@ -127,13 +128,14 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			.fetch();
 
 		// 각 Feed에 대한 추가 정보 설정 (예: 즐겨찾기 수)
-		feeds.forEach(feed -> {
-			FavoriteInfoDto favoriteInfoDto = favoriteService.readFavoriteInfo(feed.getId(),
+		FavoriteInfoDto favoriteInfoDto;
+		for (FeedDto feed : feeds) {
+			favoriteInfoDto = favoriteService.readFavoriteInfo(feed.getId(),
 				feed.getMember().getId());
 			feed.setIsFavorite(favoriteInfoDto.checked());
 			feed.setIsFollow(followService.readFollowCheck(memberId, feed.getMember().getId()));
 			feed.setSize(map.get(feed.getId()));
-		});
+		}
 
 		// size 값을 기준으로 결과 리스트를 내림차순으로 정렬
 		feeds.sort((feed1, feed2) -> Long.compare(feed2.getSize(), feed1.getSize()));
