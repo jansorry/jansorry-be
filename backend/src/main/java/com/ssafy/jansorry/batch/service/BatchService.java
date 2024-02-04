@@ -22,7 +22,7 @@ public class BatchService {
 	private final BatchCustomRepository batchCustomRepository;
 	private final FavoriteService favoriteService;
 
-	private void updateTop5NagsByGender() {
+	public void updateTop5NagsByGender() {
 		List<Long> nagsIndexes = null;
 		String key = "";
 		for (int i = 0; i < 2; i++) { // 성별
@@ -35,7 +35,7 @@ public class BatchService {
 		}
 	}
 
-	private void updateTop5NagsByAgeRange() {
+	public void updateTop5NagsByAgeRange() {
 		List<Long> nagsIndexes = null;
 		String key = "";
 		for (int i = 2; i < 5; i += 10) { // 성별
@@ -48,7 +48,7 @@ public class BatchService {
 		}
 	}
 
-	private void updateTop5NagsByAll() {
+	public void updateTop5NagsByAll() {
 		List<Long> nagsIndexes = null;
 		String key = "";
 		for (int i = 1; i <= 7; i++) { // categoryId
