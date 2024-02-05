@@ -69,8 +69,3 @@ logging:
     info:
       root: debug
     com.ssafy.jansorry: DEBUG
-
-gpt:
-  secret-key: ${GPT_SECRET_KEY}
-  model: ${GPT_MODEL}
-  url: ${GPT_URL}
