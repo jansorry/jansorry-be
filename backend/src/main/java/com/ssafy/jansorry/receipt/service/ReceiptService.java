@@ -21,6 +21,7 @@ import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
+import com.ssafy.jansorry.nag.repository.NagRepository;
 import com.ssafy.jansorry.receipt.domain.Receipt;
 import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
@@ -37,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptService {
 	private final ReceiptRepository receiptRepository;
 	private final ActionRepository actionRepository;
+	private final NagRepository nagRepository;
 	private final RedisTemplate<String, Object> statisticZSetRedisTemplate;
 	private final Long SIZE_LIMIT = 5L;
 
@@ -51,6 +53,15 @@ public class ReceiptService {
 				action -> action.getNag().getId(),
 				Collectors.counting()
 			));
+
+		Long maxCountedNagId = countMap.entrySet().stream()
+			.max(Map.Entry.comparingByValue())
+			.map(Map.Entry::getKey)
+			.orElse(0L);
+		if (maxCountedNagId == 0L) {
+			throw new BaseException(RECEIPT_COUNT_ZERO);
+		}
+
 		List<NagStatisticDto> nagStatisticDtos = actions.stream()
 			.map(action -> toStatisticDto(action, countMap.get(action.getNag().getId())))
 			.distinct()
@@ -59,6 +70,7 @@ public class ReceiptService {
 		return ReceiptStatisticDto.builder()
 			.totalCount(totalCount)
 			.totalPrice(totalPrice)
+			.maxCountedNagId(maxCountedNagId)
 			.nagStatisticDtos(nagStatisticDtos)
 			.build();
 	}
@@ -71,8 +83,10 @@ public class ReceiptService {
 		}
 		// 생성이 가능하다면
 		updateTopReceiptPrice(member.getNickname(), receiptSaveDto.totalPrice());// 가격 고점 갱신 (top 5)
-
-		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage(member.getName())));// 생성
+		String nagContent = nagRepository.findNagById(receiptSaveDto.maxCountedNagId())
+			.orElseThrow(() -> new BaseException(NAG_NOT_FOUND))
+			.getContent();
+		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage(member.getName(), nagContent)));// 생성
 		return receiptCount + 1L;// 기존 개수 + 1 = next seq
 	}
 
