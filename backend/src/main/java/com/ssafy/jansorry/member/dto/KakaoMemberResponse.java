@@ -6,7 +6,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(SnakeCaseStrategy.class)
-public record KakaoMemberResponse(Long id, boolean hasSignedUp, LocalDateTime connectAt, KaKaoAccount kakaoAccount) {
+public record KakaoMemberResponse(
+	Long id,
+	boolean hasSignedUp,
+	LocalDateTime connectAt,
+	KaKaoAccount kakaoAccount) {
 
 	@JsonNaming(SnakeCaseStrategy.class)
 	public record KaKaoAccount(
