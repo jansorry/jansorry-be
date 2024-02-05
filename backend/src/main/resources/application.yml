@@ -45,6 +45,7 @@ spring:
     kakao:
       client_id: ${CLIENT_ID}
       redirect_uri: ${REDIRECT_URI}
+      scope: profile_nickname
 
   batch:
     jdbc:
@@ -58,9 +59,9 @@ spring:
 logging:
   level:
     org:
-#      springframework:
-#        orm:
-#          jpa: DEBUG
+    #      springframework:
+    #        orm:
+    #          jpa: DEBUG
     org.springframework.batch: DEBUG
     org.springframework.jdbc.core: DEBUG
     org.springframework.transaction: DEBUG
