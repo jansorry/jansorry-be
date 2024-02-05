@@ -3,7 +3,6 @@ package com.ssafy.jansorry.receipt.service;
 import static com.ssafy.jansorry.action.util.ActionMapper.*;
 import static com.ssafy.jansorry.batch.domain.type.BatchKeyHeadType.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
-import static com.ssafy.jansorry.receipt.util.MessageGenerator.*;
 import static com.ssafy.jansorry.receipt.util.ReceiptMapper.toDto;
 import static com.ssafy.jansorry.receipt.util.ReceiptMapper.toEntity;
 
@@ -21,7 +20,6 @@ import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
-import com.ssafy.jansorry.nag.repository.NagRepository;
 import com.ssafy.jansorry.receipt.domain.Receipt;
 import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
@@ -38,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptService {
 	private final ReceiptRepository receiptRepository;
 	private final ActionRepository actionRepository;
-	private final NagRepository nagRepository;
+	private final MessageService messageService;
 	private final RedisTemplate<String, Object> statisticZSetRedisTemplate;
 	private final Long SIZE_LIMIT = 5L;
 
@@ -83,18 +81,17 @@ public class ReceiptService {
 		}
 		// 생성이 가능하다면
 		updateTopReceiptPrice(member.getNickname(), receiptSaveDto.totalPrice());// 가격 고점 갱신 (top 5)
-		String nagContent = nagRepository.findNagById(receiptSaveDto.maxCountedNagId())
-			.orElseThrow(() -> new BaseException(NAG_NOT_FOUND))
-			.getContent();
-		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage(member.getName(), nagContent)));// 생성
+
+		receiptRepository.save(toEntity(receiptSaveDto, member,
+			messageService.generateMessage(member.getName(), receiptSaveDto.maxCountedNagId())));// 생성
 		return receiptCount + 1L;// 기존 개수 + 1 = next seq
 	}
 
 	public ReceiptResponse readReceipt(Member member, Long seq) {
 		List<Receipt> receipts = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member);
 
-		// 빈 리스트 반환 or 없는 영수증 조회 시
-		if (receipts.isEmpty() || receipts.size() < seq + 1) {
+		// 빈 리스트 반환 or 없는 영수증 조회 or 범위 밖 seq 조회 시
+		if (receipts.isEmpty() || receipts.size() < seq + 1 || seq < 0 || seq > 2) {
 			throw new BaseException(RECEIPT_NOT_FOUND);
 		}
 
