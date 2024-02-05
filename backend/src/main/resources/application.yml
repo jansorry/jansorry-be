@@ -19,7 +19,7 @@ spring:
   jpa:
     #open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -69,3 +69,8 @@ logging:
     info:
       root: debug
     com.ssafy.jansorry: DEBUG
+
+gpt:
+  secret-key: ${GPT_SECRET_KEY}
+  model: ${GPT_MODEL}
+  url: ${GPT_URL}
