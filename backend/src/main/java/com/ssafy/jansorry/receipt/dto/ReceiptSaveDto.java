@@ -6,6 +6,7 @@ import lombok.Builder;
 public record ReceiptSaveDto(
 	String familyUrl,
 	String friendUrl,
-	Long totalPrice
+	Long totalPrice,
+	Long maxCountedNagId
 ) {
 }

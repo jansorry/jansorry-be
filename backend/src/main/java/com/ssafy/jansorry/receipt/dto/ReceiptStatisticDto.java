@@ -8,6 +8,7 @@ import lombok.Builder;
 public record ReceiptStatisticDto(
 	Long totalCount,
 	Long totalPrice,
+	Long maxCountedNagId,
 	List<NagStatisticDto> nagStatisticDtos
 ) {
 }
