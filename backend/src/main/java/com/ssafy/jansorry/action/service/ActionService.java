@@ -23,6 +23,7 @@ import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.nag.domain.Nag;
+import com.ssafy.jansorry.nag.domain.type.GroupType;
 import com.ssafy.jansorry.nag.repository.NagRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -83,16 +84,21 @@ public class ActionService {
 	}
 
 	public MainPageDto readMainPage(Long memberId) {
-		List<Long> list = actionRepository.findGroupTypesByMemberId(memberId);
-		if (CollectionUtils.isEmpty(list)) {
+		List<GroupType> groupTypes = actionRepository.findGroupTypesByMemberId(memberId);
+		if (CollectionUtils.isEmpty(groupTypes)) {
 			return MainPageDto.builder()
 				.count(0L)
 				.categoryList(new ArrayList<>())
 				.build();
 		}
+
+		List<Long> groupIndexes = groupTypes.stream()
+			.map(GroupType::getIdx)
+			.collect(Collectors.toList());
+
 		return MainPageDto.builder()
-			.count((long)list.size())
-			.categoryList(list)
+			.count((long) groupTypes.size())
+			.categoryList(groupIndexes)
 			.build();
 	}
 }
