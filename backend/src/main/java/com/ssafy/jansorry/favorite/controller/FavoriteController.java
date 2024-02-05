@@ -1,13 +1,18 @@
 package com.ssafy.jansorry.favorite.controller;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.jansorry.favorite.service.FavoriteBatchService;
 import com.ssafy.jansorry.favorite.service.FavoriteService;
 import com.ssafy.jansorry.member.domain.Member;
 
@@ -21,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 public class FavoriteController {
 	private final FavoriteService favoriteService;
+	private final FavoriteBatchService favoriteBatchService;
 
 	@Operation(
 		summary = "좋아요 추가",
@@ -43,6 +49,14 @@ public class FavoriteController {
 		@AuthenticationPrincipal Member member
 	) {
 		favoriteService.updateFavorite(actionId, member.getId(), false);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/favorites/sync")
+	private ResponseEntity<Void> syncFavorite() {
+		Set<String> updatedData = favoriteBatchService.synchronizeUpdatedData(LocalDateTime.now().minusWeeks(1));
+		favoriteBatchService.deleteEmptySet(updatedData);
+		favoriteBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
 	}
 }

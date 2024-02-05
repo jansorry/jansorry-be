@@ -5,6 +5,6 @@ import lombok.Builder;
 @Builder
 public record SignUpResponse(
 	String nickname,
-	String accessToken
-) {
+	String kakaoNickname,
+	String accessToken) {
 }

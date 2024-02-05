@@ -25,6 +25,7 @@ public class KakaoAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvid
 			.queryParam("response_type", "code")
 			.queryParam("client_id", kakaoOauthConfig.clientId())
 			.queryParam("redirect_uri", kakaoOauthConfig.redirectUri())
+			.queryParam("scope", String.join(",", kakaoOauthConfig.scope()))
 			.toUriString();
 	}
 }

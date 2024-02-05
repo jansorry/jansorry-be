@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.jansorry.batch.type.BatchKeyNumberType;
+import com.ssafy.jansorry.batch.domain.type.BatchKeyNumberType;
 import com.ssafy.jansorry.member.domain.type.GenderType;
 
 import lombok.RequiredArgsConstructor;

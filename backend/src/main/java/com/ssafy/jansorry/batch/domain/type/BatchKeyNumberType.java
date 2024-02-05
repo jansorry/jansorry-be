@@ -1,4 +1,4 @@
-package com.ssafy.jansorry.batch.type;
+package com.ssafy.jansorry.batch.domain.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

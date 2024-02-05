@@ -19,7 +19,7 @@ spring:
   jpa:
     #open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -45,6 +45,7 @@ spring:
     kakao:
       client_id: ${CLIENT_ID}
       redirect_uri: ${REDIRECT_URI}
+      scope: profile_nickname
 
   batch:
     jdbc:
@@ -58,9 +59,9 @@ spring:
 logging:
   level:
     org:
-#      springframework:
-#        orm:
-#          jpa: DEBUG
+    #      springframework:
+    #        orm:
+    #          jpa: DEBUG
     org.springframework.batch: DEBUG
     org.springframework.jdbc.core: DEBUG
     org.springframework.transaction: DEBUG
@@ -68,3 +69,8 @@ logging:
     info:
       root: debug
     com.ssafy.jansorry: DEBUG
+
+gpt:
+  secret-key: ${GPT_SECRET_KEY}
+  model: ${GPT_MODEL}
+  url: ${GPT_URL}

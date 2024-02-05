@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.jansorry.action.domain.Action;
+import com.ssafy.jansorry.nag.domain.type.GroupType;
 
 @Repository
 public interface ActionRepository extends JpaRepository<Action, Long>, ActionCustomRepository {
@@ -19,7 +20,7 @@ public interface ActionRepository extends JpaRepository<Action, Long>, ActionCus
 	Optional<Action> findActionById(Long actionId);
 
 	@Query("SELECT c.groupType FROM Action a JOIN a.nag n JOIN n.category c WHERE a.member.id = :memberId AND a.deleted = false")
-	List<Long> findGroupTypesByMemberId(@Param("memberId") Long memberId);
+	List<GroupType> findGroupTypesByMemberId(@Param("memberId") Long memberId);
 
 	Long countAllByMemberIdAndDeletedFalse(Long memberId);
 }

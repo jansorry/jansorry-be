@@ -45,6 +45,7 @@ public class MemberService {
 		Member member = memberRepository.save(
 			Member.builder()
 				.oauthId(new OauthId(request.oauthId(), OauthServerType.KAKAO))
+				.name(request.kakaoNickname())
 				.nickname(createNickname())
 				.imageUrl(createImageUrl())
 				.birth(request.birth())
@@ -54,6 +55,7 @@ public class MemberService {
 
 		return LoginDto.builder()
 			.nickname(member.getNickname())
+			.kakaoNickname(member.getName())
 			.accessToken(tokenService.createToken(member))
 			.refreshToken(tokenService.createRefreshToken(member))
 			.build();
