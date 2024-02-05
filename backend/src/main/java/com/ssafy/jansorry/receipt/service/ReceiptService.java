@@ -2,6 +2,7 @@ package com.ssafy.jansorry.receipt.service;
 
 import static com.ssafy.jansorry.batch.type.BatchKeyHeadType.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
+import static com.ssafy.jansorry.receipt.util.MessageGenerator.*;
 import static com.ssafy.jansorry.receipt.util.ReceiptMapper.*;
 
 import java.util.Collections;
@@ -16,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.receipt.domain.Receipt;
-import com.ssafy.jansorry.receipt.dto.ReceiptDto;
 import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
+import com.ssafy.jansorry.receipt.dto.ReceiptResponse;
+import com.ssafy.jansorry.receipt.dto.ReceiptSaveDto;
 import com.ssafy.jansorry.receipt.repository.ReceiptRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,20 +34,20 @@ public class ReceiptService {
 
 	//Dto는 Service <-> Controller
 	//Entity는 Repository <-> Service
-	public Long createReceipt(ReceiptDto receiptDto, Member member) {
+	public Long createReceipt(ReceiptSaveDto receiptSaveDto, Member member) {
 		int receiptCount = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member).size();
 
 		if (receiptCount >= 3) {
 			throw new BaseException(RECEIPT_OVERFLOW);
 		}
 		// 생성이 가능하다면
-		updateTopReceiptPrice(member.getNickname(), receiptDto.totalPrice());// 가격 고점 갱신 (top 5)
+		updateTopReceiptPrice(member.getNickname(), receiptSaveDto.totalPrice());// 가격 고점 갱신 (top 5)
 
-		receiptRepository.save(toEntity(receiptDto, member));// 생성
+		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage(member.getName())));// 생성
 		return receiptCount + 1L;// 기존 개수 + 1 = next seq
 	}
 
-	public ReceiptDto readReceipt(Member member, Long seq) {
+	public ReceiptResponse readReceipt(Member member, Long seq) {
 		List<Receipt> receipts = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member);
 
 		// 빈 리스트 반환 or 없는 영수증 조회 시
