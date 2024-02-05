@@ -43,7 +43,7 @@ public class ReceiptService {
 		// 생성이 가능하다면
 		updateTopReceiptPrice(member.getNickname(), receiptSaveDto.totalPrice());// 가격 고점 갱신 (top 5)
 
-		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage()));// 생성
+		receiptRepository.save(toEntity(receiptSaveDto, member, generateMessage(member.getName())));// 생성
 		return receiptCount + 1L;// 기존 개수 + 1 = next seq
 	}
 
