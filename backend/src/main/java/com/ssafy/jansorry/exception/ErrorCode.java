@@ -24,7 +24,7 @@ public enum ErrorCode {
 	ACTION_NOT_FOUND(404, "해당 대응을 찾을 수 없습니다."), ACTION_ALREADY_DELETED(404, "이미 삭제된 대응입니다"),
 
 	// receipt
-	RECEIPT_NOT_FOUND(404, "해당 영수증을 찾을 수 없습니다."), RECEIPT_OVERFLOW(400, "영수증 최대 발행 개수는 3개 입니다."),
+	RECEIPT_NOT_FOUND(404, "해당 영수증을 찾을 수 없습니다."), RECEIPT_OVERFLOW(400, "영수증 최대 발행 개수는 3개 입니다."), RECEIPT_COUNT_ZERO(400, "영수증을 만들기 위해선 최소 하나 이상의 대응을 생성해야합니다."),
 
 	// token
 	EXPIRED_REFRESH_TOKEN(404, "만료된 refresh token 입니다."),
