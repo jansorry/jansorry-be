@@ -2,6 +2,7 @@ package com.ssafy.jansorry.nag.domain;
 
 import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.common.BaseEntity;
+import com.ssafy.jansorry.receipt.domain.Message;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -32,6 +33,10 @@ public class Nag extends BaseEntity {
 	@OneToMany(mappedBy = "nag", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
 	private List<Action> actions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "nag", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	private List<Message> messages = new ArrayList<>();
 
 	@NonNull
 	private String content;
