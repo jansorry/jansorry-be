@@ -32,7 +32,7 @@ public class BatchController {
 	@Operation(
 		summary = "테스트용 최종 통계 데이터셋 바인딩 (호출 금지)",
 		description = "최종 통계 데이터 모으기위해 수동으로 트리거를 준다.")
-	@GetMapping("/test/final/data/do/not/touch")
+	@GetMapping("/test/gathering")
 	private ResponseEntity<Void> setFinalData() {
 		// 잔소리
 		batchService.updateTop5NagsByGender();// 성별 탑 5위 잔소리 = 2 x 7 = 14
@@ -42,6 +42,9 @@ public class BatchController {
 		batchService.updateTop5ActionByFavoriteCount();// 좋아요 순 탑 5위 actionId = 1
 		// 영수증
 		batchService.updateTop5ReceiptsByPrice();// 가격 순 탑 5위 영수증 = 1
+
+		// 최종 데이터 mysql에 반영
+		batchService.bindRedisToMysql();
 
 		return ResponseEntity.ok().build();
 	}
