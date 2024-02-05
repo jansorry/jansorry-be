@@ -6,6 +6,7 @@ import lombok.Builder;
 public record LoginDto(
 	String oauthId,
 	String nickname,
+	String kakaoNickname,
 	String accessToken,
 	String refreshToken
 ) {
