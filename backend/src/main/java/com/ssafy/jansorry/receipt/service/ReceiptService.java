@@ -1,12 +1,15 @@
 package com.ssafy.jansorry.receipt.service;
 
+import static com.ssafy.jansorry.action.util.ActionMapper.*;
 import static com.ssafy.jansorry.batch.domain.type.BatchKeyHeadType.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 import static com.ssafy.jansorry.receipt.util.MessageGenerator.*;
-import static com.ssafy.jansorry.receipt.util.ReceiptMapper.*;
+import static com.ssafy.jansorry.receipt.util.ReceiptMapper.toDto;
+import static com.ssafy.jansorry.receipt.util.ReceiptMapper.toEntity;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,12 +17,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.jansorry.action.domain.Action;
+import com.ssafy.jansorry.action.repository.ActionRepository;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.receipt.domain.Receipt;
+import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 import com.ssafy.jansorry.receipt.dto.ReceiptRankDto;
 import com.ssafy.jansorry.receipt.dto.ReceiptResponse;
 import com.ssafy.jansorry.receipt.dto.ReceiptSaveDto;
+import com.ssafy.jansorry.receipt.dto.ReceiptStatisticDto;
 import com.ssafy.jansorry.receipt.repository.ReceiptRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,11 +36,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReceiptService {
 	private final ReceiptRepository receiptRepository;
+	private final ActionRepository actionRepository;
 	private final RedisTemplate<String, Object> statisticZSetRedisTemplate;
 	private final Long SIZE_LIMIT = 5L;
 
-	//Dto는 Service <-> Controller
-	//Entity는 Repository <-> Service
+	public ReceiptStatisticDto readAllReceiptStatistic(Long memberId) {
+		List<Action> actions = actionRepository.findAllByMemberIdAndDeletedFalse(memberId);
+		Long totalCount = (long)actions.size();
+		Long totalPrice = actions.stream().mapToLong(action -> action.getNag().getPrice()).sum();
+
+		// 개수 통계
+		Map<Long, Long> countMap = actions.stream()
+			.collect(Collectors.groupingBy(
+				action -> action.getNag().getId(),
+				Collectors.counting()
+			));
+		List<NagStatisticDto> nagStatisticDtos = actions.stream()
+			.map(action -> toStatisticDto(action, countMap.get(action.getNag().getId())))
+			.distinct()
+			.toList();
+
+		return ReceiptStatisticDto.builder()
+			.totalCount(totalCount)
+			.totalPrice(totalPrice)
+			.nagStatisticDtos(nagStatisticDtos)
+			.build();
+	}
+
 	public Long createReceipt(ReceiptSaveDto receiptSaveDto, Member member) {
 		int receiptCount = receiptRepository.findAllByMemberAndDeletedFalseOrderById(member).size();
 
