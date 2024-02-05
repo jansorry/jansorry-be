@@ -1,10 +1,10 @@
 package com.ssafy.jansorry.batch.util;
 
-import static com.ssafy.jansorry.batch.type.BatchKeyHeadType.*;
-import static com.ssafy.jansorry.batch.type.BatchKeyNumberType.*;
+import static com.ssafy.jansorry.batch.domain.type.BatchKeyHeadType.*;
+import static com.ssafy.jansorry.batch.domain.type.BatchKeyNumberType.*;
 import static com.ssafy.jansorry.nag.domain.type.GroupType.*;
 
-import com.ssafy.jansorry.batch.type.BatchKeyNumberType;
+import com.ssafy.jansorry.batch.domain.type.BatchKeyNumberType;
 import com.ssafy.jansorry.nag.domain.type.GroupType;
 
 public class BatchMapper {

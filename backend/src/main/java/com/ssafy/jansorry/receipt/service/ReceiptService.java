@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.receipt.service;
 
-import static com.ssafy.jansorry.batch.type.BatchKeyHeadType.*;
+import static com.ssafy.jansorry.batch.domain.type.BatchKeyHeadType.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 import static com.ssafy.jansorry.receipt.util.MessageGenerator.*;
 import static com.ssafy.jansorry.receipt.util.ReceiptMapper.*;

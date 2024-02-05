@@ -1,6 +1,6 @@
 package com.ssafy.jansorry.batch.service;
 
-import static com.ssafy.jansorry.batch.type.BatchKeyHeadType.*;
+import static com.ssafy.jansorry.batch.domain.type.BatchKeyHeadType.*;
 import static com.ssafy.jansorry.batch.util.BatchMapper.*;
 import static com.ssafy.jansorry.exception.ErrorCode.*;
 
@@ -18,7 +18,7 @@ import com.ssafy.jansorry.batch.domain.BatchEntity;
 import com.ssafy.jansorry.batch.dto.FinalDataDto;
 import com.ssafy.jansorry.batch.repository.BatchCustomRepository;
 import com.ssafy.jansorry.batch.repository.BatchRepository;
-import com.ssafy.jansorry.batch.type.BatchKeyNumberType;
+import com.ssafy.jansorry.batch.domain.type.BatchKeyNumberType;
 import com.ssafy.jansorry.batch.util.BatchMapper;
 import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.favorite.service.FavoriteService;
