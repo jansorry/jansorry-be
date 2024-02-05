@@ -78,6 +78,7 @@ public class MemberController {
 		return ResponseEntity.ok(
 			SignUpResponse.builder()
 				.nickname(login.nickname())
+				.kakaoNickname(login.kakaoNickname())
 				.accessToken(login.accessToken())
 				.build()
 		);

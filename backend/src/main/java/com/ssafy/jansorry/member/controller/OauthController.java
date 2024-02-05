@@ -75,6 +75,7 @@ public class OauthController {
 			.builder()
 			.oauthId(login.oauthId())
 			.nickname(login.nickname())
+			.kakaoNickname(login.kakaoNickname())
 			.accessToken(login.accessToken())
 			.build());
 	}
