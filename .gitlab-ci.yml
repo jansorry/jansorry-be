@@ -21,9 +21,6 @@ create-env:
     - echo "REDIS_PASSWORD = ${REDIS_PASSWORD}" >> .env
     - echo "CLIENT_ID = ${CLIENT_ID}" >> .env
     - echo "REDIRECT_URI = ${REDIRECT_URI}" >> .env
-    - echo "GPT_SECRET_KEY = ${GPT_SECRET_KEY}" >> .env
-    - echo "GPT_MODEL = ${GPT_MODEL}" >> .env
-    - echo "GPT_URL = ${GPT_URL}" >> .env
   artifacts:
     paths:
       - .env
