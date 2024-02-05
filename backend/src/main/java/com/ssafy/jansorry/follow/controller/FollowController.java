@@ -3,7 +3,6 @@ package com.ssafy.jansorry.follow.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/follows")
 public class FollowController {
 	private final FollowService followService;
-
-	@Operation(
-		summary = "팔로우 여부 확인",
-		description = "본인이 팔로우 한 유저인지 여부를 확인한다.")
-	@GetMapping("/{toId}/check")
-	public ResponseEntity<Boolean> getFollowCheck(
-		@AuthenticationPrincipal Member member,
-		@PathVariable Long toId) {
-		return ResponseEntity.ok(followService.readFollowCheck(member.getId(), toId));
-	}
 
 	@Operation(
 		summary = "팔로우 추가",

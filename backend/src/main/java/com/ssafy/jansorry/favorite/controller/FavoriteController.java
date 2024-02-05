@@ -1,19 +1,13 @@
 package com.ssafy.jansorry.favorite.controller;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.jansorry.favorite.dto.FavoriteInfoDto;
-import com.ssafy.jansorry.favorite.service.FavoriteBatchService;
 import com.ssafy.jansorry.favorite.service.FavoriteService;
 import com.ssafy.jansorry.member.domain.Member;
 
@@ -27,17 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 public class FavoriteController {
 	private final FavoriteService favoriteService;
-
-	@Operation(
-		summary = "좋아요 정보 확인",
-		description = "해당 대응의 좋아요 개수와 본인이 좋아요를 눌렀는지 여부를 조회한다.")
-	@GetMapping("/actions/{actionId}/favorite")
-	private ResponseEntity<FavoriteInfoDto> getFavoriteCount(
-		@PathVariable Long actionId,
-		@AuthenticationPrincipal Member member
-	) {
-		return ResponseEntity.ok(favoriteService.readFavoriteInfo(actionId, member.getId()));
-	}
 
 	@Operation(
 		summary = "좋아요 추가",
