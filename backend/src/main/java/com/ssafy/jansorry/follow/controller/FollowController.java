@@ -1,6 +1,7 @@
 package com.ssafy.jansorry.follow.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.jansorry.follow.dto.FollowerDto;
+import com.ssafy.jansorry.follow.dto.FollowingDto;
 import com.ssafy.jansorry.follow.service.FollowBatchService;
 import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Member;
@@ -48,6 +51,24 @@ public class FollowController {
 		@PathVariable Long toId) {
 		followService.updateFollow(member.getId(), toId, false);
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(
+		summary = "팔로워 리스트 확인",
+		description = "해당 유저의 팔로워 리스트를 확인한다.")
+	@GetMapping("/follower")
+	public ResponseEntity<List<FollowerDto>> getFollowerList(
+		@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(followService.readAllFollowers(member.getId()));
+	}
+
+	@Operation(
+		summary = "팔로잉 리스트 확인",
+		description = "해당 유저의 팔로잉 리스트를 확인한다.")
+	@GetMapping("/following")
+	public ResponseEntity<List<FollowingDto>> getFollowingList(
+		@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(followService.readAllFollowings(member.getId()));
 	}
 
 	@GetMapping("/sync")
