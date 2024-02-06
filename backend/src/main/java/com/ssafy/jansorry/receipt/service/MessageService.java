@@ -24,7 +24,7 @@ public class MessageService {
 	public OpenGraphMessage generateMessage(String name, Long nagId) {
 		return OpenGraphMessage.builder()
 			.title(readRandomMessage(nagId))
-			.description(name + DESCRIPTION)
+			.description(name)// 이름만 보내도록 변경
 			.message(URL_MESSAGE)
 			.build();
 	}
