@@ -38,6 +38,7 @@ public class SecurityConfig {
 					"/api/v1/members/signup",
 					"/api/v1/members/reissue",
 					"/api/v1/ping",
+					"/api/v1/nags",
 					// allow swagger url
 					"/swagger-ui",
 					"/swagger-ui/**",
