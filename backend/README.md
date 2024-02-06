@@ -63,15 +63,17 @@
 ### main-service
 
 - **명절 잔소리 영수증 서비스**
-- 예산 100억을 기반으로 부동산에 투자하여 2년 뒤 최대 차익을 내는 것을 목표로 한다.
-- 투자 이후에는 차익과 비례한 만큼의 포인트가 적립된다.
+- 잔소리를 학업·진로/건강·외모/연애·결혼/취업·직장/가족·자녀/기타 별로 카테고리를 나눠, 사용자가 해당 잔소리를 쉽게 찾을 수 있다.
+- 잔소리에 대한 사용자의 대응을 등록할 수 있다.
+- 실시간/나이대별/팔로잉/트렌드 피드를 제공하고, 해당 피드에 좋아요 및 팔로우를 누를 수 있다.
+- 사용자가 들은 잔소리를 기반으로 영수증을 만들고, 오픈 그래프를 활용하여 어른용/친구용 영수증을 공유할 수 있다.
 
 ### sub-service
 
-- 회원 서비스
-- 랭킹 시스템
-- 공지사항
-- 최신 부동산 뉴스 기사 조회 서비스
+- 카카오 소셜 로그인
+- 나이대/성별/전체를 기준으로 잔소리 통계
+- 잔소리 모의고사
+- 관리 페이지
 
 <br>
 
@@ -81,21 +83,6 @@
 
 <img src="./assets/service/main.png" width="700" alt="main">
 
-### 회원가입 / 로그인
-<img src="./assets/service/sign-up.png" width="400" alt="sign-up"> <img src="./assets/service/login.png" width="400" alt="login">
-
-### 지도
-<img src="./assets/service/map.png" width="400" alt="map"> <img src="./assets/service/map-select.png" width="400" alt="map-select">
-
-### 결과 / 랭킹
-<img src="./assets/service/result.png" width="400" alt="result"> <img src="./assets/service/rank.png" width="400" alt="rank">
-
-### 뉴스 / 상세보기
-<img src="./assets/service/news.png" width="400" alt="news"> <img src="./assets/service/news-content.png" width="400" alt="news-content">
-
-### 공지사항 / 상세보기
-<img src="./assets/service/notice.png" width="400" alt="notice"> <img src="./assets/service/notice-content.png" width="400" alt="notice-content">
-
 
 <br>
 
@@ -103,42 +90,43 @@
 
 ## 🛠️ Skills
 
+<img src="./assets/skills.png" width="700" alt="배포 구조 이미지">
+
 ### language
 
-- back : Java 8
+- back : Java 17
 - front : Html, CSS, JavaScript, TypeScript
 
 ### framework
 
-- back : SpringBoot 2.7.16, JPA
-- front : Vue.js, Vuetify
+- back : SpringBoot 3.2.2, Spring Data JPA
+- front : Next.js
+
+### skills
+
+- back : Spring Security, JWT, Oauth2.0, Spring Batch, QueryDSL
+- front :
 
 ### database
 
-- MariaDB 2.7.4
+- MySQL 8.0.35
 - Redis
-- S3
 
 ### server
 
 - AWS EC2
 - Docker
-- Cloudtype
-- Netlify
+- Nginx
+- Jira
+- GitLab CI/CD
 
 <br>
 
 ---
 
-## 🌐 Deploy Structure
+## 🌐 System Architecture
 
-<img src="./assets/server.png" width="700" alt="배포 구조 이미지">
-
-<br>
-
-## 🏗️ UML
-
-<img src="./assets/uml.png" width="700" alt="uml">
+<img src="./assets/system_architecture.png" width="700" alt="배포 구조 이미지">
 
 <br>
 
@@ -154,38 +142,63 @@
 
 ### 🎯 회원
 
-💡 회원 관리는 기본적으로 Spring Security와 JWT를 활용
+💡 회원은 Spring Security & JWT & Oauth2.0 사용하여 카카오 소셜 로그인 구현
 
 - [x] 회원 가입
 - [x] 로그인 / 로그아웃
 - [x] 마이페이지
-- [x] 프로필 사진 업로드 / 삭제
-- [x] 회원 탈퇴
-- [x] 랭킹 조회
+- [x] 닉네임 수정
+- [x] 회원 탈퇴 (soft deletion)
+- [x] 팔로잉/팔로워 목록
 
-### 🎯 부동산 (모의 투자)
+### 🎯 잔소리
 
-💡 카카오 맵 API를 활용하여 부동산 좌표 및 정보 출력
+💡 학업·진로/건강·외모/연애·결혼/취업·직장/가족·자녀/기타 총 6개의 카테고리로 잔소리 분류
 
-- [x] 전체 좌표 정보 조회 (위경도, aptCode, 최소/최대 가격)
-- [x] 특정 좌표 조회 (거래 번호를 비롯한 해당 부동산의 상세 정보)
-- [x] 투자 결과 조회 (투자 후 수익 총량 출력 및 점수 반영)
+- [x] 잔소리 카드 상세 조회
+- [x] 잔소리 카드 전체 조회 (카테고리별로 잔소리와 가격 제공)
 
-### 🎯 공지사항
+### 🎯 잔소리 대응
 
-💡 조회를 제외한 기능들은 관리자 권한이 필요
+💡 사용자가 받은 잔소리에 대한 대응 생성
 
-- [x] 전체 공지사항 조회
-- [x] 공지사항 작성
-- [x] 특정 공지사항 조회
-- [x] 특정 공지사항 수정
-- [x] 특정 공지사항 삭제
+- [x] 대응 생성
+- [x] 대응 상세 조회 (해당 사용자가 작성한 대응을 상세 조회)
+- [x] 대응 전체 조회 (해당 사용자가 작성한 대응 목록들을 전체 조회, 무한스크롤)
+- [x] 대응 삭제 (soft deletion)
 
-### 🎯 뉴스
+### 🎯 피드
 
-💡최신 네이버 부동산 뉴스 정보 제공
+💡 실시간/나이대/팔로잉/트렌드 별로 잔소리-대응 피드 무한스크롤로 제공, 동시성을 고려하여 팔로우 및 좋아요 3초 디바운싱 적용
 
-- [x] 뉴스 크롤링 (1일, 지난 6일 -> 1주일 사전 적재)
-- [x] 뉴스 크롤링 스케쥴러 (랜덤한 매 5:30 ~ 6:30 마다 크롤링)
-- [x] 전체 뉴스 기사 조회
-- [x] 특정 뉴스 기사 조회
+- [x] 실시간 피드 조회
+- [x] 팔로잉 피드 조회
+- [x] 나이대별 피드 조회 (10/20/30대 별로 피드 조회)
+- [x] 트랜드 피드 조회 (좋아요 순으로 30개의 피드를 뽑은 다음, 랜덤으로 10개 피드 제공)
+
+### 🎯영수증
+
+💡 영수증은 3개까지만 저장 가능, 어른용/친구용 별로 글자 크기 상이
+
+- [x] 영수증 저장 (3개까지만 저장 가능)
+- [x] 영수증 상세조회 (3개중 n번째의 영수증 조회)
+- [x] 영수증 삭제 (soft deletion)
+- [x] 영수증 개수 확인
+
+### 🎯 좋아요
+
+💡 동시성을 고려하여 redis에 좋아요 정보 저장 후, 배치를 이용해 db에 반영
+
+- [x] 좋아요 등록
+- [x] 좋아요 취소
+
+### 🎯 팔로우
+
+💡 동시성을 고려하여 redis에 팔로우 정보 저장 후, 배치를 이용해 db에 반영
+
+- [x] 회원 검색 (닉네임으로 회원 조회)
+- [x] 팔로잉 등록
+- [x] 팔로잉 취소
+- [x] 팔로잉 전체 조회
+- [x] 팔로워 전체 조회
+
