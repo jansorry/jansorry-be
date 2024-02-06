@@ -39,13 +39,14 @@ public class NagService {
 		List<Nag> nags = nagRepository.findAllByDeletedFalse();
 
 		for (Nag nag : nags) {
-			if (!Objects.equals(categoryId, nag.getCategory().getId())) {
+			if (!Objects.equals(categoryId, nag.getCategory().getId())) {// 달라질 경우
 				categoryDtos.add(CategoryDto.builder()
 					.categoryId(categoryId)
 					.title(GroupType.values()[categoryId.intValue() - 1].getValue())
 					.nags(nagDtos)
 					.build());
 				nagDtos = new ArrayList<>();
+				nagDtos.add(NagMapper.toDto(nag));
 				categoryId = nag.getCategory().getId();
 			} else {
 				nagDtos.add(NagMapper.toDto(nag));
