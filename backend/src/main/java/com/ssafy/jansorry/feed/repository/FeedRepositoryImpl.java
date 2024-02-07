@@ -33,7 +33,6 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 	private final JPAQueryFactory queryFactory;
 	private final FavoriteService favoriteService;
 	private final FollowService followService;
-	private final BooleanExpression nonEmptyContent = action.content.trim().isNotEmpty();
 
 	@Override
 	public Slice<FeedInfoResponse> searchFeedsByTime(Long memberId, Long lastActionId, Pageable pageable) {
@@ -42,7 +41,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 			.where(
 				ltActionId(lastActionId), // action.id < lastActionId
 				action.deleted.isFalse(),
-				nonEmptyContent // 공백이 아닌 내용을 가진 피드만 조회
+				action.content.trim().isNotEmpty()// 공백이 아닌 내용을 가진 피드만 조회
 			)
 			.orderBy(action.id.desc()) // 최신순으로 보여줌
 			.limit(pageable.getPageSize() + 1) // limit보다 한 개 더 들고온다.
@@ -61,7 +60,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 				ltActionId(lastActionId),
 				action.member.birth.subtract(currentDate.getYear()).abs().between(age - 1, age + 8),
 				action.deleted.isFalse(),
-				nonEmptyContent // 공백이 아닌 내용을 가진 피드만 조회
+				action.content.trim().isNotEmpty()// 공백이 아닌 내용을 가진 피드만 조회
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
@@ -79,7 +78,7 @@ public class FeedRepositoryImpl implements FeedCustomRepository {
 				action.member.id.in(memberIdSet),
 				ltActionId(lastActionId),
 				action.deleted.isFalse(),
-				nonEmptyContent // 공백이 아닌 내용을 가진 피드만 조회
+				action.content.trim().isNotEmpty()// 공백이 아닌 내용을 가진 피드만 조회
 			)
 			.orderBy(action.id.desc())
 			.limit(pageable.getPageSize() + 1)
