@@ -1,6 +1,7 @@
 package com.ssafy.jansorry.follow.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.jansorry.follow.dto.FollowerDto;
+import com.ssafy.jansorry.follow.dto.FollowingDto;
 import com.ssafy.jansorry.follow.service.FollowBatchService;
 import com.ssafy.jansorry.follow.service.FollowService;
 import com.ssafy.jansorry.member.domain.Member;
@@ -26,16 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/follows")
 public class FollowController {
 	private final FollowService followService;
-
-	@Operation(
-		summary = "팔로우 여부 확인",
-		description = "본인이 팔로우 한 유저인지 여부를 확인한다.")
-	@GetMapping("/{toId}/check")
-	public ResponseEntity<Boolean> getFollowCheck(
-		@AuthenticationPrincipal Member member,
-		@PathVariable Long toId) {
-		return ResponseEntity.ok(followService.readFollowCheck(member.getId(), toId));
-	}
+	private final FollowBatchService followBatchService;
 
 	@Operation(
 		summary = "팔로우 추가",
@@ -56,6 +50,32 @@ public class FollowController {
 		@AuthenticationPrincipal Member member,
 		@PathVariable Long toId) {
 		followService.updateFollow(member.getId(), toId, false);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(
+		summary = "팔로워 리스트 확인",
+		description = "해당 유저의 팔로워 리스트를 확인한다.")
+	@GetMapping("/follower")
+	public ResponseEntity<List<FollowerDto>> getFollowerList(
+		@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(followService.readAllFollowers(member.getId()));
+	}
+
+	@Operation(
+		summary = "팔로잉 리스트 확인",
+		description = "해당 유저의 팔로잉 리스트를 확인한다.")
+	@GetMapping("/following")
+	public ResponseEntity<List<FollowingDto>> getFollowingList(
+		@AuthenticationPrincipal Member member) {
+		return ResponseEntity.ok(followService.readAllFollowings(member.getId()));
+	}
+
+	@GetMapping("/sync")
+	private ResponseEntity<Void> syncFollow() {
+		Set<String> updatedData = followBatchService.synchronizeUpdatedData(LocalDateTime.now().minusWeeks(1));
+		followBatchService.deleteEmptySet(updatedData);
+		followBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
 	}
 }

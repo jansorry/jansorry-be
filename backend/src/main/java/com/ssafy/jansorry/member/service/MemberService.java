@@ -45,6 +45,7 @@ public class MemberService {
 		Member member = memberRepository.save(
 			Member.builder()
 				.oauthId(new OauthId(request.oauthId(), OauthServerType.KAKAO))
+				.name(request.kakaoNickname())
 				.nickname(createNickname())
 				.imageUrl(createImageUrl())
 				.birth(request.birth())
@@ -54,6 +55,7 @@ public class MemberService {
 
 		return LoginDto.builder()
 			.nickname(member.getNickname())
+			.kakaoNickname(member.getName())
 			.accessToken(tokenService.createToken(member))
 			.refreshToken(tokenService.createRefreshToken(member))
 			.build();
@@ -110,6 +112,7 @@ public class MemberService {
 		FollowCountDto followCountDto = followService.readFollowCount(member.getId());
 
 		return MemberResponse.builder()
+			.memberId(member.getId())
 			.nickname(member.getNickname())
 			.imageUrl(member.getImageUrl())
 			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(member.getId()))
@@ -119,13 +122,14 @@ public class MemberService {
 	}
 
 	// 검색 시 다른 멤버의 정보 조회
-	public MemberResponse readMemberByNickName(String nickName) {
-		Member searchedMember = memberRepository.findByNickname(nickName)
+	public MemberResponse readMemberByNickName(String nickname) {
+		Member searchedMember = memberRepository.findByNickname(nickname)
 			.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 		FollowCountDto followCountDto = followService.readFollowCount(searchedMember.getId());
 
 		return MemberResponse.builder()
-			.nickname(nickName)
+			.memberId(searchedMember.getId())
+			.nickname(nickname)
 			.imageUrl(searchedMember.getImageUrl())
 			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(searchedMember.getId()))
 			.followerCnt(followCountDto.followerCount())

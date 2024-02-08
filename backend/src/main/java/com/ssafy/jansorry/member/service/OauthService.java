@@ -44,14 +44,16 @@ public class OauthService {
 		if (member == null) { // 가입하지 않은 유저일 경우
 			return LoginDto.builder()
 				.oauthId(dto.member().getOauthId().getOauthServerId())
+				.kakaoNickname(dto.member().getName())
 				.build();
-		} else if (member.getDeleted()) {
+		} else if (member.getDeleted()) { // 탈퇴한 회원일 경우
 			throw new BaseException(INVALID_MEMBER_WITHDRAWN);
 		}
 
 		return LoginDto.builder()
 			.oauthId(member.getOauthId().getOauthServerId())
 			.nickname(member.getNickname())
+			.kakaoNickname(member.getName())
 			.accessToken(tokenService.createToken(member))
 			.refreshToken(tokenService.createRefreshToken(member))
 			.build();

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.jansorry.favorite.dto.FavoriteInfoDto;
 import com.ssafy.jansorry.favorite.service.FavoriteBatchService;
 import com.ssafy.jansorry.favorite.service.FavoriteService;
 import com.ssafy.jansorry.member.domain.Member;
@@ -27,17 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1")
 public class FavoriteController {
 	private final FavoriteService favoriteService;
-
-	@Operation(
-		summary = "좋아요 정보 확인",
-		description = "해당 대응의 좋아요 개수와 본인이 좋아요를 눌렀는지 여부를 조회한다.")
-	@GetMapping("/actions/{actionId}/favorite")
-	private ResponseEntity<FavoriteInfoDto> getFavoriteCount(
-		@PathVariable Long actionId,
-		@AuthenticationPrincipal Member member
-	) {
-		return ResponseEntity.ok(favoriteService.readFavoriteInfo(actionId, member.getId()));
-	}
+	private final FavoriteBatchService favoriteBatchService;
 
 	@Operation(
 		summary = "좋아요 추가",
@@ -60,6 +49,14 @@ public class FavoriteController {
 		@AuthenticationPrincipal Member member
 	) {
 		favoriteService.updateFavorite(actionId, member.getId(), false);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/favorites/sync")
+	private ResponseEntity<Void> syncFavorite() {
+		Set<String> updatedData = favoriteBatchService.synchronizeUpdatedData(LocalDateTime.now().minusWeeks(1));
+		favoriteBatchService.deleteEmptySet(updatedData);
+		favoriteBatchService.refreshZSetAfterBatch();
 		return ResponseEntity.ok().build();
 	}
 }

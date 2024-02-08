@@ -2,7 +2,7 @@ package com.ssafy.jansorry.batch.repository;
 
 import java.util.List;
 
-import com.ssafy.jansorry.batch.type.BatchKeyNumberType;
+import com.ssafy.jansorry.batch.domain.type.BatchKeyNumberType;
 
 public interface BatchCustomRepository {
 	List<Long> searchTop5NagsByGender(Long categoryId, BatchKeyNumberType keyNumberType);

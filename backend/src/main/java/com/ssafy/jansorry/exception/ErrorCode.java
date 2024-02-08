@@ -24,7 +24,7 @@ public enum ErrorCode {
 	ACTION_NOT_FOUND(404, "해당 대응을 찾을 수 없습니다."), ACTION_ALREADY_DELETED(404, "이미 삭제된 대응입니다"),
 
 	// receipt
-	RECEIPT_NOT_FOUND(404, "해당 영수증을 찾을 수 없습니다."), RECEIPT_OVERFLOW(400, "영수증 최대 발행 개수는 3개 입니다."),
+	RECEIPT_NOT_FOUND(404, "해당 영수증을 찾을 수 없습니다."), RECEIPT_OVERFLOW(400, "영수증 최대 발행 개수는 3개 입니다."), RECEIPT_COUNT_ZERO(400, "영수증을 만들기 위해선 최소 하나 이상의 대응을 생성해야합니다."),
 
 	// token
 	EXPIRED_REFRESH_TOKEN(404, "만료된 refresh token 입니다."),
@@ -34,8 +34,10 @@ public enum ErrorCode {
 
 	// batch
 	BATCH_FAILED(500, "배치작업이 실패했습니다."),
-	FOLLOW_SYNC_FAILED(500, "배치작업이 실패했습니다."),
-	FAVORITE_SYNC_FAILED(500, "배치작업이 실패했습니다."),
+	FOLLOW_SYNC_FAILED(500, "팔로우 동기화 작업이 실패했습니다."),
+	FAVORITE_SYNC_FAILED(500, "좋아요 동기화 작업이 실패했습니다."),
+	DATA_GATHERING_FAILED(500, "최종 데이터 정리 작업이 실패했습니다."),
+	DATA_BINDING_FAILED(500, "최종 데이터 반영 작업이 실패했습니다."),
 
 	// ===========================================================================
 	// 4xx: Client Errors

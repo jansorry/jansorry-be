@@ -31,10 +31,11 @@ public class FeedController {
 		description = "최신 순으로 실시간 피드를 조회한다. (무한스크롤)")
 	@GetMapping("/live")
 	public ResponseEntity<Slice<FeedInfoResponse>> getLiveFeeds(
+		@AuthenticationPrincipal Member member,
 		@RequestParam(required = false) Long lastActionId,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(feedService.readLiveFeeds(lastActionId, pageable));
+		return ResponseEntity.ok(feedService.readLiveFeeds(member.getId(), lastActionId, pageable));
 	}
 
 	// 10대, 20대, 30대 피드 조회
@@ -43,11 +44,12 @@ public class FeedController {
 		description = "해당 연령대의 피드를 최신 순으로 조회한다. (무한스크롤)")
 	@GetMapping("/generation")
 	public ResponseEntity<Slice<FeedInfoResponse>> getGenerationFeeds(
+		@AuthenticationPrincipal Member member,
 		@RequestParam(required = false) Long lastActionId,
 		@RequestParam int age,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(feedService.readGenerationFeeds(lastActionId, age, pageable));
+		return ResponseEntity.ok(feedService.readGenerationFeeds(member.getId(), lastActionId, age, pageable));
 	}
 
 	// 팔로잉 피드 조회
@@ -66,11 +68,12 @@ public class FeedController {
 	// 트렌드 피드 조회
 	@Operation(
 		summary = "트렌드 피드 조회",
-		description = "피드를 좋아요 및 최신 순으로 조회한다. (무한스크롤)")
+		description = "피드를 좋아요 및 최신 순으로 10개 조회한다. (무한스크롤)")
 	@GetMapping("/trending")
 	public ResponseEntity<Slice<FeedInfoResponse>> getTrendingFeeds(
+		@AuthenticationPrincipal Member member,
 		Pageable pageable
 	) {
-		return ResponseEntity.ok(feedService.readTrendingFeeds(pageable));
+		return ResponseEntity.ok(feedService.readTrendingFeeds(member.getId(), pageable));
 	}
 }

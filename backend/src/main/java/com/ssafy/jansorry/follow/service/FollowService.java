@@ -1,16 +1,25 @@
 package com.ssafy.jansorry.follow.service;
 
+import static com.ssafy.jansorry.exception.ErrorCode.*;
 import static com.ssafy.jansorry.follow.domain.type.FollowRedisKeyType.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.jansorry.exception.BaseException;
 import com.ssafy.jansorry.follow.dto.FollowCountDto;
 import com.ssafy.jansorry.follow.dto.FollowDto;
+import com.ssafy.jansorry.follow.dto.FollowerDto;
+import com.ssafy.jansorry.follow.dto.FollowingDto;
+import com.ssafy.jansorry.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class FollowService {
 	private final RedisTemplate<String, Object> followRedisTemplate;
 	private final RedisTemplate<String, Object> followZSetRedisTemplate;
+	private final MemberRepository memberRepository;
 
 	/**
 	 * @param fromId : 주체
@@ -28,6 +38,9 @@ public class FollowService {
 	public Boolean readFollowCheck(Long fromId, Long toId) {
 		String followerKey = FOLLOWER.getValue() + toId.toString();
 		FollowDto followerDto = getFollowDto(followerKey);
+		if (followerDto == null) {
+			return false;
+		}
 		return followerDto.getMemberIdSet().contains(fromId);
 	}
 
@@ -94,7 +107,42 @@ public class FollowService {
 		}
 		updateFollowDto(followingKey, followingDto); // 팔로잉 업데이트
 		updateFollowDto(followerKey, followerDto); // 팔로워 업데이트 (양방향 업데이트)
-		updateFollowUpdatesZSet(fromId, followingDto.getUpdatedAt());// ZSet에 업데이트 정보 추가
+		updateFollowUpdatesZSet(followingKey, followingDto.getUpdatedAt());// ZSet에 팔로잉 업데이트 정보 추가
+		updateFollowUpdatesZSet(followerKey, followingDto.getUpdatedAt());// ZSet에 팔로워 업데이트 정보 추가
+	}
+
+	// redis 로부터 팔로워 리스트를 반환하는 메서드
+	public List<FollowerDto> readAllFollowers(Long memberId) {
+		String followerKey = FOLLOWER.getValue() + memberId.toString();
+		return Optional.ofNullable(getFollowDto(followerKey))
+			.map(FollowDto::getMemberIdSet)
+			.orElse(Collections.emptySet()) // Null 대신 empty set 반환
+			.stream()
+			.map(fromId -> memberRepository.findById(fromId)
+				.map(member -> FollowerDto.builder()
+					.fromId(fromId)
+					.imageUrl(member.getImageUrl())
+					.nickname(member.getNickname())
+					.build())
+				.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER))) // 멤버가 없는 경우 예외 처리
+			.collect(Collectors.toList());
+	}
+
+	// redis 로부터 팔로잉 리스트를 반환하는 메서드
+	public List<FollowingDto> readAllFollowings(Long memberId) {
+		String followingKey = FOLLOWING.getValue() + memberId.toString();
+		return Optional.ofNullable(getFollowDto(followingKey))
+			.map(FollowDto::getMemberIdSet)
+			.orElse(Collections.emptySet()) // Null 대신 empty set 반환
+			.stream()
+			.map(toId -> memberRepository.findById(toId)
+				.map(member -> FollowingDto.builder()
+					.toId(toId)
+					.imageUrl(member.getImageUrl())
+					.nickname(member.getNickname())
+					.build())
+				.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER))) // 멤버가 없는 경우 예외 처리
+			.collect(Collectors.toList());
 	}
 
 	// redis 로부터 해당 FollowDto 를 반환하는 메서드
@@ -107,9 +155,9 @@ public class FollowService {
 		followRedisTemplate.opsForValue().set(key, updatedFollowDto);
 	}
 
-	// ZSet에 팔로우 업데이트 정보를 추가하는 메서드 -> 단방향만 저장
-	private void updateFollowUpdatesZSet(Long fromId, LocalDateTime updatedAt) {
+	// ZSet에 팔로우 업데이트 정보를 추가하는 메서드 -> 양방향 모두 저장
+	private void updateFollowUpdatesZSet(String key, LocalDateTime updatedAt) {
 		double score = updatedAt.toEpochSecond(ZoneOffset.UTC);
-		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET.getValue(), fromId.toString(), score);
+		followZSetRedisTemplate.opsForZSet().add(FOLLOW_UPDATES_ZSET.getValue(), key, score);
 	}
 }

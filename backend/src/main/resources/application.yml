@@ -19,7 +19,7 @@ spring:
   jpa:
     #open-in-view: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -37,26 +37,35 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
 
-  sql:
-    init:
-      mode: always
+#  sql:
+#    init:
+#      mode: always
 
   oauth:
     kakao:
       client_id: ${CLIENT_ID}
       redirect_uri: ${REDIRECT_URI}
+      scope: profile_nickname
+
   batch:
-    job:
-      enabled: false # 서버 재시작시 배치 자동실행 방지
     jdbc:
       initialize-schema: always
+    job:
+      enabled: false # 서버 재시작시 배치 자동실행 방지
+
 #  profiles:
 #    active: jwt, api
 
 logging:
   level:
     org:
-      springframework:
-        orm:
-          jpa: DEBUG
+    #      springframework:
+    #        orm:
+    #          jpa: DEBUG
+    org.springframework.batch: DEBUG
+    org.springframework.jdbc.core: DEBUG
+    org.springframework.transaction: DEBUG
+
+    info:
+      root: debug
     com.ssafy.jansorry: DEBUG

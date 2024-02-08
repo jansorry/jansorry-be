@@ -9,7 +9,7 @@ import org.springframework.util.CollectionUtils;
 import com.ssafy.jansorry.action.domain.Action;
 import com.ssafy.jansorry.action.dto.ActionCreationDto;
 import com.ssafy.jansorry.action.dto.ActionDto;
-import com.ssafy.jansorry.action.dto.NagStatisticDto;
+import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 import com.ssafy.jansorry.member.domain.Member;
 import com.ssafy.jansorry.nag.domain.Nag;
 
