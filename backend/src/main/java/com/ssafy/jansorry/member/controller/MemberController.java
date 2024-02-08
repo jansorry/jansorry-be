@@ -121,7 +121,7 @@ public class MemberController {
 	@Operation(
 		summary = "회원 닉네임 검색")
 	@GetMapping("/search")
-	public ResponseEntity<MemberResponse> getMemberByNickName(@RequestParam(name = "nickName") String nickName) {
-		return ResponseEntity.ok(memberService.readMemberByNickName(nickName));
+	public ResponseEntity<MemberResponse> getMemberByNickName(@RequestParam(name = "nickname") String nickname) {
+		return ResponseEntity.ok(memberService.readMemberByNickName(nickname));
 	}
 }

@@ -121,13 +121,13 @@ public class MemberService {
 	}
 
 	// 검색 시 다른 멤버의 정보 조회
-	public MemberResponse readMemberByNickName(String nickName) {
-		Member searchedMember = memberRepository.findByNickname(nickName)
+	public MemberResponse readMemberByNickName(String nickname) {
+		Member searchedMember = memberRepository.findByNickname(nickname)
 			.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 		FollowCountDto followCountDto = followService.readFollowCount(searchedMember.getId());
 
 		return MemberResponse.builder()
-			.nickname(nickName)
+			.nickname(nickname)
 			.imageUrl(searchedMember.getImageUrl())
 			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(searchedMember.getId()))
 			.followerCnt(followCountDto.followerCount())
