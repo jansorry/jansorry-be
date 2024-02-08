@@ -37,9 +37,9 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
 
-  #  sql:
-  #    init:
-  #      mode:
+#  sql:
+#    init:
+#      mode: always
 
   oauth:
     kakao:
