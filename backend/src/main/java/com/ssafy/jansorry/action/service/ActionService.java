@@ -40,7 +40,7 @@ public class ActionService {
 	public void createAction(Long nagId, Member member, ActionCreationDto actionCreationDto) {
 		Nag nag = nagRepository.findNagById(nagId)
 			.orElseThrow(() -> new BaseException(NAG_NOT_FOUND));
-		if (member.getActions().size() > 120) {
+		if (actionRepository.countAllByMemberIdAndDeletedFalse(member.getId()) > 120) {
 			throw new BaseException(ACTION_COUNT_FULL);
 		}
 		actionRepository.save(toEntity(nag, member, actionCreationDto));
