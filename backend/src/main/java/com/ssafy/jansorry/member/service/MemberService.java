@@ -112,6 +112,7 @@ public class MemberService {
 		FollowCountDto followCountDto = followService.readFollowCount(member.getId());
 
 		return MemberResponse.builder()
+			.memberId(member.getId())
 			.nickname(member.getNickname())
 			.imageUrl(member.getImageUrl())
 			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(member.getId()))
@@ -127,6 +128,7 @@ public class MemberService {
 		FollowCountDto followCountDto = followService.readFollowCount(searchedMember.getId());
 
 		return MemberResponse.builder()
+			.memberId(searchedMember.getId())
 			.nickname(nickname)
 			.imageUrl(searchedMember.getImageUrl())
 			.actionCnt(actionRepository.countAllByMemberIdAndDeletedFalse(searchedMember.getId()))
