@@ -35,13 +35,13 @@ public class BatchController {
 	@GetMapping("/test/gathering")
 	private ResponseEntity<Void> setFinalData() {
 		// 잔소리
-		batchService.updateTop5NagsByGender();// 성별 탑 5위 잔소리 = 2 x 7 = 14
-		batchService.updateTop5NagsByAgeRange();// 연령 별 탑 5위 잔소리 = 3 * 7 = 21
-		batchService.updateTop5NagsByAll();// 전체 중 탑 5위 잔소리 = 7
-		// 좋아요
-		batchService.updateTop5ActionByFavoriteCount();// 좋아요 순 탑 5위 actionId = 1
-		// 영수증
-		batchService.updateTop5ReceiptsByPrice();// 가격 순 탑 5위 영수증 = 1
+		// batchService.updateTop5NagsByGender();// 성별 탑 5위 잔소리 = 2 x 7 = 14
+		// batchService.updateTop5NagsByAgeRange();// 연령 별 탑 5위 잔소리 = 3 * 7 = 21
+		// batchService.updateTop5NagsByAll();// 전체 중 탑 5위 잔소리 = 7
+		// // 좋아요
+		// batchService.updateTop5ActionByFavoriteCount();// 좋아요 순 탑 5위 actionId = 1
+		// // 영수증
+		// batchService.updateTop5ReceiptsByPrice();// 가격 순 탑 5위 영수증 = 1
 
 		// 최종 데이터 mysql에 반영
 		batchService.bindRedisToMysql();
