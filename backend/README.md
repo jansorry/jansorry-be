@@ -8,14 +8,15 @@
 
 ## 📚 TOC
 
+- [BACKEND TEAMS](#-backend-teams)
+- [ROLE](#-role)
 - [DEPLOY URL](#-deploy-url)
 - [SPECIFICATION](#-specification)
 - [INTRODUCTION](#-introduction)
-- [SERVICE LAYOUT](#-service-layout)
 - [SKILLS](#-skills)
-- [DEPLOY STRUCTURE](#-deploy-structure)
-- [UML](#-uml)
+- [SYSTEM ARCHITECTURE](#-system-architecture)
 - [ERD](#-erd)
+- [SERVICE LAYOUT](#-service-layout)
 - [FUNCTION](#-function)
 
 <br>
