@@ -43,7 +43,7 @@ public class SecurityConfig {
 					"/swagger-ui",
 					"/swagger-ui/**",
 					"/v3/**",
-					"/api/v1/batch/test/gathering"
+					"/api/v1/batch"
 				)
 				.permitAll()
 				.anyRequest()
