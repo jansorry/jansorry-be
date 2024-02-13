@@ -99,7 +99,9 @@ public class BatchService {
 	public void bindRedisToMysql() {
 		Set<String> keys = statisticRedisTemplate.keys("*");
 		System.out.println("keys!! = " + keys);
-		keys.forEach(this::processKey);
+		for(String key : keys) {
+			processKey(key);
+		}
 	}
 
 	private void processKey(String key) {
@@ -131,8 +133,8 @@ public class BatchService {
 			} else {
 				throw new IllegalArgumentException("Unsupported object type");
 			}
-			actions.add(nagRepository.findNagById(actionId)
-				.orElseThrow(() -> new BaseException(NAG_NOT_FOUND))
+			actions.add(actionRepository.findActionById(actionId)
+				.orElseThrow(() -> new BaseException(ACTION_NOT_FOUND))
 				.getContent());
 		}
 		batchRepository.save(BatchEntity.builder()
