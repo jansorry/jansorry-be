@@ -42,7 +42,8 @@ public class SecurityConfig {
 					// allow swagger url
 					"/swagger-ui",
 					"/swagger-ui/**",
-					"/v3/**"
+					"/v3/**",
+					"/api/v1/batch/test/gathering"
 				)
 				.permitAll()
 				.anyRequest()
