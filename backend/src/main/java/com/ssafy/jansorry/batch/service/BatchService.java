@@ -99,7 +99,9 @@ public class BatchService {
 	public void bindRedisToMysql() {
 		Set<String> keys = statisticRedisTemplate.keys("*");
 		System.out.println("keys!! = " + keys);
-		keys.forEach(this::processKey);
+		for(String key : keys) {
+			processKey(key);
+		}
 	}
 
 	private void processKey(String key) {
