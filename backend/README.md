@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://jansorry.com">
-    <img src="./assets/title.png" width="400" height="160"  alt="logo">
+    <img src="./assets/title.png" alt="title">
   </a>
 </p>
 
@@ -22,23 +22,44 @@
 
 ---
 
-<H2 align="center">MEMBER</H2>
+## 🤝 Backend Teams
 
-<p align="center">
-  <a href="https://github.com/takealook97">
-    <img src="https://github.com/takealook97.png/" width="150" alt="takealook97">
-  </a>
-  <a href="https://github.com/sunju5402">
-    <img src="https://github.com/sunju5402.png/" width="150" alt="smarfy99">
-  </a>
-  <a href="https://github.com/ozllzlme">
-    <img src="https://github.com/ozllzlme.png/" width="150" alt="smarfy99">
-  </a>
-  <br>
-  김건우 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 이선주 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 김예림
-</p>
+| <a href="https://github.com/takealook97"><img src="https://github.com/takealook97.png" width="120"/></a> | <a href="https://github.com/sunju5402"><img src="https://github.com/sunju5402.png" width="120"/></a> | <a href="https://github.com/ozllzlme"><img src="https://github.com/ozllzlme.png" width="120"/></a> |
+|:--------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------:|
+|                                  [김건우](https://github.com/takealook97)                                   |                                 [이선주](https://github.com/sunju5402)                                  |                                 [김예림](https://github.com/ozllzlme)                                 |
 
-<br>
+---
+
+## 🙋‍♂️ Role
+
+### 김건우
+
+- 팀장, 백엔드 리더
+- 서버 CI/CD 구축 및 인프라 총괄
+- ERD 및 시스템 아키텍쳐 설계
+- Nag & Category(잔소리) API 구축
+- Action(대응) API 구축
+- Favorite(좋아요) API 구축
+- Follow(팔로우) API 구축
+- Receipt(영수증) API 구축
+- Batch Job(스프링 배치 스케쥴링) 구축
+
+### 이선주
+
+- ERD 및 시스템 아키텍쳐 설계
+- 초기 개발 환경 구축
+- Member(회원) API 구축
+    - JWT, Oauth2.0, Spring Security, 카카오 소셜 로그인
+- Feed(피드) API 구축
+- 마이 페이지 무한 스크롤 기능
+
+### 김예림
+
+- Main(로그인 후 첫 화면) API 구축
+- Receipt(영수증) API 구축
+- 기획 및 캐릭터 디자인 & 피그마
+- PPT 기획 및 제작
+- 광고 및 마케팅 & 촬영
 
 ---
 
@@ -72,17 +93,7 @@
 
 - 카카오 소셜 로그인
 - 나이대/성별/전체를 기준으로 잔소리 통계
-- 잔소리 모의고사
 - 관리 페이지
-
-<br>
-
-## 🏠 Service Layout
-
-### 메인 페이지
-
-<img src="./assets/service/main.png" width="700" alt="main">
-
 
 <br>
 
@@ -94,31 +105,33 @@
 
 ### language
 
-- back : Java 17
-- front : Html, CSS, JavaScript, TypeScript
+- Java 17
 
 ### framework
 
-- back : SpringBoot 3.2.2, Spring Data JPA
-- front : Next.js
+- SpringBoot 3.2.1
+- Spring Data JPA
+- Spring Security
+- Spring Batch
+- QueryDSL
 
-### skills
+### sub
 
-- back : Spring Security, JWT, Oauth2.0, Spring Batch, QueryDSL
-- front :
+- JWT
+- Oauth2.0
 
 ### database
 
 - MySQL 8.0.35
-- Redis
+- Redis 7.2
 
-### server
+### ci / cd
 
 - AWS EC2
-- Docker
-- Nginx
-- Jira
-- GitLab CI/CD
+- Docker, Docker Hub
+- Nginx Proxy Manager
+- gitlab-runner
+- Portainer
 
 <br>
 
@@ -126,13 +139,27 @@
 
 ## 🌐 System Architecture
 
-<img src="./assets/system_architecture.png" width="700" alt="배포 구조 이미지">
+<img src="./assets/system_architecture.png" width="700" alt="system_architecture">
 
 <br>
 
 ## 💾 ERD
 
 <img src="./assets/erd.png" width="700" alt="erd">
+
+<br>
+
+---
+
+## 🏠 Service Layout
+
+| <img src="./assets/service/landing.gif" width="250" alt="landing"> | <img src="./assets/service/mycard.png" width="250" alt="mycard"> | <img src="./assets/service/category.png" width="250" alt="category"> |
+|:------------------------------------------------------------------:|:----------------------------------------------------------------:|:--------------------------------------------------------------------:|
+|                             Main Page                              |                             My Card                              |                               Category                               |
+
+| <img src="./assets/service/feed.png" width="250" alt="feed"> | <img src="./assets/service/mypage.png" width="250" alt="mypage"> | <img src="./assets/service/receipt.png" width="250" alt="receipt"> |
+|:------------------------------------------------------------:|:----------------------------------------------------------------:|:------------------------------------------------------------------:|
+|                             Feed                             |                             My Page                              |                              Receipt                               |
 
 <br>
 
@@ -201,4 +228,3 @@
 - [x] 팔로잉 취소
 - [x] 팔로잉 전체 조회
 - [x] 팔로워 전체 조회
-
