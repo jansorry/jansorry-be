@@ -21,7 +21,7 @@ public enum ErrorCode {
 	NAG_NOT_FOUND(404, "해당 잔소리를 찾을 수 없습니다."),
 
 	// action
-	ACTION_NOT_FOUND(404, "해당 대응을 찾을 수 없습니다."), ACTION_ALREADY_DELETED(404, "이미 삭제된 대응입니다"),
+	ACTION_NOT_FOUND(404, "해당 대응을 찾을 수 없습니다."), ACTION_ALREADY_DELETED(404, "이미 삭제된 대응입니다"), ACTION_COUNT_FULL(400, "대응은 120개까지만 생성 가능합니다."),
 
 	// receipt
 	RECEIPT_NOT_FOUND(404, "해당 영수증을 찾을 수 없습니다."), RECEIPT_OVERFLOW(400, "영수증 최대 발행 개수는 3개 입니다."), RECEIPT_COUNT_ZERO(400, "영수증을 만들기 위해선 최소 하나 이상의 대응을 생성해야합니다."),

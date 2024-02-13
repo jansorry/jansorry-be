@@ -82,7 +82,7 @@ public class MemberService {
 	}
 
 	private Long createImageUrl() {
-		return ThreadLocalRandom.current().nextLong(10L);
+		return ThreadLocalRandom.current().nextLong(9) + 1;
 	}
 
 	public MemberEditDto updateMember(Member member, MemberEditDto request) {
