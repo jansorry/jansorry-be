@@ -119,7 +119,7 @@ public class ReceiptService {
 	private void updateTopReceiptPrice(String nickname, Long totalPrice) {
 		double score = (double)totalPrice;
 		statisticZSetRedisTemplate.opsForZSet().add(
-			TOP_RECEIPT.getValue(),// key = top_receipt
+			TOP_RECEIPT_ZSET.getValue(),// key = top_receipt_zset
 			ReceiptRankDto.builder()// value = [nickname, totalPrice]
 				.nickname(nickname)
 				.totalPrice(totalPrice)
@@ -127,19 +127,19 @@ public class ReceiptService {
 			score);// score = totalPrice
 
 		// ZSet의 크기 확인
-		Long zSetSize = statisticZSetRedisTemplate.opsForZSet().size(TOP_RECEIPT.getValue());
+		Long zSetSize = statisticZSetRedisTemplate.opsForZSet().size(TOP_RECEIPT_ZSET.getValue());
 
 		// 상위 5개를 초과하는 경우, 초과분 제거
 		if (zSetSize != null && zSetSize > SIZE_LIMIT) {
 			statisticZSetRedisTemplate.opsForZSet()
-				.removeRange(TOP_RECEIPT.getValue(), 0, zSetSize - (SIZE_LIMIT + 1));
+				.removeRange(TOP_RECEIPT_ZSET.getValue(), 0, zSetSize - (SIZE_LIMIT + 1));
 		}
 	}
 
 	// 상위 5개의 좋아요 순(내림차순)에 대한 닉네임 & 가격을 반환
 	public List<ReceiptRankDto> getTopReceiptsList() {
 		Set<Object> topReceipts = statisticZSetRedisTemplate.opsForZSet()
-			.reverseRange(TOP_RECEIPT.getValue(), 0, SIZE_LIMIT - 1);
+			.reverseRange(TOP_RECEIPT_ZSET.getValue(), 0, SIZE_LIMIT - 1);
 
 		if (topReceipts == null) {
 			return Collections.emptyList();
