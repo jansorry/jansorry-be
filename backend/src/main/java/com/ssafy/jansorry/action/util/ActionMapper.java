@@ -18,7 +18,7 @@ import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 public class ActionMapper {
 	static ArrayList<String> testOauthIds = new ArrayList<>(
 		Arrays.asList("3298433859", "3287827161", "3291230371",
-			"3299026039", "3301262680", "3324554317"));
+			"3299026039", "3301262680", "3324554317", "3298008368"));
 
 	public static Action toEntity(Nag nag, Member member, ActionCreationDto actionCreationDto) {
 		String content = "";
