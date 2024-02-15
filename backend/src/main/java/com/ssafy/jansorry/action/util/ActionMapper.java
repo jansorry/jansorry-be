@@ -1,7 +1,5 @@
 package com.ssafy.jansorry.action.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,20 +14,11 @@ import com.ssafy.jansorry.nag.domain.Nag;
 import com.ssafy.jansorry.receipt.dto.NagStatisticDto;
 
 public class ActionMapper {
-	static ArrayList<String> testOauthIds = new ArrayList<>(
-		Arrays.asList("3298433859", "3287827161", "3291230371",
-			"3299026039", "3301262680", "3324554317", "3298008368"));
-
 	public static Action toEntity(Nag nag, Member member, ActionCreationDto actionCreationDto) {
-		String content = "";
-		if (testOauthIds.contains(member.getOauthId().getOauthServerId())) {
-			content = actionCreationDto.content();
-		}
-
 		return Action.builder()
 			.member(member)
 			.nag(nag)
-			.content(content)
+			.content(actionCreationDto.content())
 			.build();
 	}
 
