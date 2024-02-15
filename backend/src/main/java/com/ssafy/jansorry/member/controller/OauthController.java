@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 @Tag(name = "인증 대행 컨트롤러", description = "Oauth 관련 로그인 및 로그아웃 기능 등이 포함되어 있음")
 @RequiredArgsConstructor
@@ -29,25 +28,6 @@ import lombok.SneakyThrows;
 @RequestMapping("/api/v1/oauth")
 public class OauthController {
 	private final OauthService oauthService;
-
-	@SneakyThrows
-	@GetMapping("/{oauthServerType}")
-	public ResponseEntity<Void> redirectAuthCodeRequestUrl(
-		@PathVariable OauthServerType oauthServerType,
-		HttpServletResponse response
-	) {
-		String redirectUrl = oauthService.getAuthCodeRequestUrl(oauthServerType);
-		response.sendRedirect(redirectUrl);
-		return ResponseEntity.ok().build();
-	}
-
-	@SneakyThrows
-	@GetMapping("/redirected/kakao")
-	public ResponseEntity<Void> redirectAuthCodeRequestUrl(
-		@RequestParam String code
-	) {
-		return ResponseEntity.ok().build();
-	}
 
 	@Operation(
 		summary = "카카오 로그인",
