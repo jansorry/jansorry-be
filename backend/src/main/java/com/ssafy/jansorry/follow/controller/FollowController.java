@@ -70,12 +70,4 @@ public class FollowController {
 		@AuthenticationPrincipal Member member) {
 		return ResponseEntity.ok(followService.readAllFollowings(member.getId()));
 	}
-
-	@GetMapping("/sync")
-	private ResponseEntity<Void> syncFollow() {
-		Set<String> updatedData = followBatchService.synchronizeUpdatedData(LocalDateTime.now().minusWeeks(1));
-		followBatchService.deleteEmptySet(updatedData);
-		followBatchService.refreshZSetAfterBatch();
-		return ResponseEntity.ok().build();
-	}
 }

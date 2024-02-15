@@ -51,12 +51,4 @@ public class FavoriteController {
 		favoriteService.updateFavorite(actionId, member.getId(), false);
 		return ResponseEntity.ok().build();
 	}
-
-	@GetMapping("/favorites/sync")
-	private ResponseEntity<Void> syncFavorite() {
-		Set<String> updatedData = favoriteBatchService.synchronizeUpdatedData(LocalDateTime.now().minusWeeks(1));
-		favoriteBatchService.deleteEmptySet(updatedData);
-		favoriteBatchService.refreshZSetAfterBatch();
-		return ResponseEntity.ok().build();
-	}
 }
